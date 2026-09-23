@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ company.name }} | HeavyMeter
+{% endblock %}
+
+{% block page_title %}
+    Company Details
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-4">
+
+    <div>
+
+        <h4 class="fw-bold">
+            {{ company.name }}
+        </h4>
+
+        <span class="text-secondary">
+            {{ company.code }}
+        </span>
+
+    </div>
+
+    <div>
+
+        <a href="{% url 'companies:update' company.pk %}"
+           class="btn btn-warning">
+
+            <i class="bi bi-pencil me-1"></i>
+            Edit
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="row g-3">
+
+    <div class="col-lg-4">
+
+        <div class="panel">
+
+            <div class="panel-header">
+                <div class="panel-title">
+                    Company Information
+                </div>
+            </div>
+
+            <div class="panel-body">
+
+                <p>
+                    <small class="text-secondary">
+                        Company Code
+                    </small><br>
+
+                    <strong>{{ company.code }}</strong>
+                </p>
+
+                <p>
+                    <small class="text-secondary">
+                        Phone
+                    </small><br>
+
+                    {{ company.phone|default:"—" }}
+                </p>
+
+                <p>
+                    <small class="text-secondary">
+                        Email
+                    </small><br>
+
+                    {{ company.email|default:"—" }}
+                </p>
+
+                <p>
+                    <small class="text-secondary">
+                        Address
+                    </small><br>
+
+                    {{ company.address|default:"—" }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-lg-8">
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+                    Company Sites
+                </div>
+
+                <a href="{% url 'companies:site_create' %}"
+                   class="btn btn-sm btn-warning">
+
+                    Add Site
+
+                </a>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table">
+
+                    <thead>
+                        <tr>
+                            <th>Site</th>
+                            <th>Code</th>
+                            <th>Contact</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for site in company.sites.all %}
+
+                        <tr>
+
+                            <td>
+                                {{ site.name }}
+                            </td>
+
+                            <td>
+                                {{ site.code }}
+                            </td>
+
+                            <td>
+                                {{ site.contact_person|default:"—" }}
+                            </td>
+
+                            <td>
+
+                                {% if site.is_active %}
+
+                                <span class="status status-active">
+                                    Active
+                                </span>
+
+                                {% else %}
+
+                                <span class="status status-danger">
+                                    Inactive
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="4"
+                                class="text-center text-secondary py-4">
+
+                                No sites registered.
+
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

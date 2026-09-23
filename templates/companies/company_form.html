@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if company %}Edit Company{% else %}Add Company{% endif %}
+    | HeavyMeter
+{% endblock %}
+
+{% block page_title %}
+    Company
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-xl-8">
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+
+                    {% if company %}
+                        Edit Company
+                    {% else %}
+                        Add Company
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="panel-body">
+
+                <form method="post"
+                      enctype="multipart/form-data">
+
+                    {% csrf_token %}
+
+                    {% if form %}
+
+                        {{ form.as_p }}
+
+                    {% else %}
+
+                    <div class="row g-3">
+
+                        <div class="col-md-8">
+
+                            <label class="form-label">
+                                Company Name
+                            </label>
+
+                            <input
+                                name="name"
+                                class="form-control"
+                                value="{{ company.name|default:'' }}"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Company Code
+                            </label>
+
+                            <input
+                                name="code"
+                                class="form-control"
+                                value="{{ company.code|default:'' }}"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Phone
+                            </label>
+
+                            <input
+                                name="phone"
+                                class="form-control"
+                                value="{{ company.phone|default:'' }}"
+                            >
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Email
+                            </label>
+
+                            <input
+                                type="email"
+                                name="email"
+                                class="form-control"
+                                value="{{ company.email|default:'' }}"
+                            >
+
+                        </div>
+
+                        <div class="col-12">
+
+                            <label class="form-label">
+                                Address
+                            </label>
+
+                            <textarea
+                                name="address"
+                                class="form-control"
+                                rows="3"
+                            >{{ company.address|default:'' }}</textarea>
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+                    <div class="mt-4">
+
+                        <button class="btn btn-warning">
+
+                            Save Company
+
+                        </button>
+
+                        <a href="{% url 'companies:list' %}"
+                           class="btn btn-outline-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

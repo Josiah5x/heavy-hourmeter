@@ -1,0 +1,494 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Dashboard | HeavyMeter
+{% endblock %}
+
+{% block page_title %}
+    Fleet Dashboard
+{% endblock %}
+
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h4 class="mb-1 fw-bold">
+            Fleet Overview
+        </h4>
+
+        <p class="text-secondary small mb-0">
+            Monitor equipment utilization and hour-meter activity.
+        </p>
+
+    </div>
+
+    <a href="{% url 'equipment:create' %}"
+       class="btn btn-warning">
+
+        <i class="bi bi-plus-lg me-1"></i>
+
+        Add Equipment
+
+    </a>
+
+</div>
+
+
+<!-- STAT CARDS -->
+
+<div class="row g-3 mb-4">
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="stat-icon icon-orange">
+
+                <i class="bi bi-truck-front-fill"></i>
+
+            </div>
+
+            <div class="stat-label">
+                Total Equipment
+            </div>
+
+            <div class="stat-value">
+                {{ equipment_count|default:"0" }}
+            </div>
+
+            <div class="stat-footer">
+                Registered machines
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="stat-icon icon-green">
+
+                <i class="bi bi-check-circle-fill"></i>
+
+            </div>
+
+            <div class="stat-label">
+                Active Equipment
+            </div>
+
+            <div class="stat-value">
+                {{ active_equipment|default:"0" }}
+            </div>
+
+            <div class="stat-footer">
+                Currently operational
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="stat-icon icon-blue">
+
+                <i class="bi bi-clock-history"></i>
+
+            </div>
+
+            <div class="stat-label">
+                Total Operating Hours
+            </div>
+
+            <div class="stat-value">
+                {{ total_hours|default:"0.0" }}
+            </div>
+
+            <div class="stat-footer">
+                Recorded machine hours
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="stat-icon icon-red">
+
+                <i class="bi bi-exclamation-triangle-fill"></i>
+
+            </div>
+
+            <div class="stat-label">
+                Maintenance Due
+            </div>
+
+            <div class="stat-value">
+                {{ maintenance_due|default:"0" }}
+            </div>
+
+            <div class="stat-footer">
+                Require attention
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="row g-3">
+
+    <!-- CHART -->
+
+    <div class="col-xl-8">
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <div class="panel-title">
+                        Equipment Utilization
+                    </div>
+
+                    <small class="text-secondary">
+                        Operating hours
+                    </small>
+
+                </div>
+
+                <select class="form-select form-select-sm bg-dark text-light"
+                        style="width:110px;">
+
+                    <option>7 Days</option>
+                    <option>30 Days</option>
+                    <option>90 Days</option>
+
+                </select>
+
+            </div>
+
+            <div class="panel-body">
+
+                <canvas id="hoursChart"
+                        height="120">
+                </canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- QUICK ACTIONS -->
+
+    <div class="col-xl-4">
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+                    Quick Actions
+                </div>
+
+            </div>
+
+            <div class="panel-body">
+
+                <a href="{% url 'equipment:create' %}"
+                   class="btn btn-outline-warning w-100 mb-2">
+
+                    <i class="bi bi-truck me-2"></i>
+
+                    Register Equipment
+
+                </a>
+
+
+                <a href="{% url 'operators:create' %}"
+                   class="btn btn-outline-light w-100 mb-2">
+
+                    <i class="bi bi-person-plus me-2"></i>
+
+                    Add Operator
+
+                </a>
+
+
+                <a href="{% url 'companies:site_create' %}"
+                   class="btn btn-outline-light w-100 mb-2">
+
+                    <i class="bi bi-geo-alt me-2"></i>
+
+                    Add Site
+
+                </a>
+
+
+                <button class="btn btn-outline-light w-100">
+
+                    <i class="bi bi-speedometer2 me-2"></i>
+
+                    Enter Hour Reading
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- EQUIPMENT TABLE -->
+
+<div class="panel mt-3">
+
+    <div class="panel-header">
+
+        <div class="panel-title">
+            Equipment Requiring Attention
+        </div>
+
+        <a href="{% url 'equipment:list' %}"
+           class="text-warning small text-decoration-none">
+
+            View All
+
+        </a>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Asset</th>
+
+                    <th>Equipment</th>
+
+                    <th>Site</th>
+
+                    <th>Hours</th>
+
+                    <th>Status</th>
+
+                    <th></th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in attention_equipment %}
+
+                <tr>
+
+                    <td class="fw-semibold">
+                        {{ item.asset_number }}
+                    </td>
+
+                    <td>
+                        {{ item.name }}
+                    </td>
+
+                    <td class="text-secondary">
+                        {{ item.site|default:"—" }}
+                    </td>
+
+                    <td>
+                        {{ item.current_hours }} hrs
+                    </td>
+
+                    <td>
+
+                        {% if item.status == "active" %}
+
+                        <span class="status status-active">
+
+                            <span class="status-dot"></span>
+
+                            Active
+
+                        </span>
+
+                        {% elif item.status == "maintenance" %}
+
+                        <span class="status status-warning">
+
+                            <span class="status-dot"></span>
+
+                            Maintenance
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="status status-danger">
+
+                            <span class="status-dot"></span>
+
+                            {{ item.get_status_display }}
+
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        <a href="{% url 'equipment:detail' item.pk %}"
+                           class="btn btn-sm btn-outline-secondary">
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="6"
+                        class="text-center text-secondary py-5">
+
+                        No equipment requires attention.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const ctx =
+    document.getElementById("hoursChart");
+
+
+new Chart(ctx, {
+
+    type: "line",
+
+    data: {
+
+        labels: [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+        ],
+
+        datasets: [
+
+            {
+                label: "Operating Hours",
+
+                data: [
+                    72,
+                    95,
+                    81,
+                    110,
+                    87,
+                    120,
+                    103
+                ],
+
+                tension: 0.4,
+
+                fill: true,
+
+                borderWidth: 2,
+
+                pointRadius: 3
+            }
+
+        ]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+                display: false
+            }
+
+        },
+
+        scales: {
+
+            y: {
+                beginAtZero: true,
+
+                grid: {
+                    color: "rgba(255,255,255,.05)"
+                }
+            },
+
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+
+        }
+
+    }
+
+});
+
+</script>
+
+{% endblock %}
