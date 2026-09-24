@@ -1,0 +1,1054 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ site.name }} | HeavyMeter
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-2">
+
+                <a
+                    href="{% url 'companies:site_list' %}"
+                    class="text-muted text-decoration-none"
+                >
+                    <i class="bi bi-geo-alt me-1"></i>
+                    Sites
+                </a>
+
+                <i class="bi bi-chevron-right small text-muted"></i>
+
+                <span class="text-muted">
+                    {{ site.name }}
+                </span>
+
+            </div>
+
+
+            <div class="d-flex align-items-center gap-3">
+
+                <div
+                    class="d-flex align-items-center justify-content-center rounded-3"
+                    style="
+                        width: 58px;
+                        height: 58px;
+                        background: rgba(245, 158, 11, .12);
+                        color: var(--primary);
+                    "
+                >
+                    <i class="bi bi-geo-alt-fill fs-3"></i>
+                </div>
+
+
+                <div>
+
+                    <h1 class="h3 fw-bold mb-1">
+                        {{ site.name }}
+                    </h1>
+
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+
+                        {% if site.code %}
+                            <span class="badge rounded-pill text-bg-secondary">
+                                {{ site.code }}
+                            </span>
+                        {% endif %}
+
+                        {% if site.is_active %}
+
+                            <span class="hm-badge hm-badge-success">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Active
+                            </span>
+
+                        {% else %}
+
+                            <span class="hm-badge hm-badge-danger">
+                                <i class="bi bi-x-circle-fill"></i>
+                                Inactive
+                            </span>
+
+                        {% endif %}
+
+                        <span class="text-muted small">
+                            {{ site.company.name }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="d-flex flex-wrap gap-2">
+
+            <a
+                href="{% url 'companies:site_list' %}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-arrow-left me-1"></i>
+                Back
+            </a>
+
+            <a
+                href="{% url 'companies:site_update' site.pk %}"
+                class="btn btn-warning"
+            >
+                <i class="bi bi-pencil-square me-1"></i>
+                Edit Site
+            </a>
+
+            <a
+                href="{% url 'companies:site_delete' site.pk %}"
+                class="btn btn-outline-danger"
+            >
+                <i class="bi bi-trash3 me-1"></i>
+                Delete
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+    ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Equipment -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="hm-card p-3 h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+
+                        <div class="text-muted small mb-1">
+                            Equipment
+                        </div>
+
+                        <div class="fs-3 fw-bold">
+                            {{ equipment|length }}
+                        </div>
+
+                        <div class="small text-muted">
+                            Assigned to this site
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="rounded-3 d-flex align-items-center justify-content-center"
+                        style="
+                            width: 44px;
+                            height: 44px;
+                            background: rgba(245, 158, 11, .12);
+                            color: var(--primary);
+                        "
+                    >
+                        <i class="bi bi-truck fs-5"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Status -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="hm-card p-3 h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+
+                        <div class="text-muted small mb-1">
+                            Site Status
+                        </div>
+
+                        <div class="fs-5 fw-bold mt-2">
+
+                            {% if site.is_active %}
+                                Active
+                            {% else %}
+                                Inactive
+                            {% endif %}
+
+                        </div>
+
+                        <div class="small text-muted">
+                            Operating status
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="rounded-3 d-flex align-items-center justify-content-center"
+                        style="
+                            width: 44px;
+                            height: 44px;
+                            background: rgba(34, 197, 94, .12);
+                            color: var(--success);
+                        "
+                    >
+                        <i class="bi bi-activity fs-5"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Location -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="hm-card p-3 h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+
+                        <div class="text-muted small mb-1">
+                            Location
+                        </div>
+
+                        <div class="fs-6 fw-bold mt-2">
+                            {{ site.city|default:"—" }}
+                        </div>
+
+                        <div class="small text-muted">
+                            {{ site.state|default:"" }}
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="rounded-3 d-flex align-items-center justify-content-center"
+                        style="
+                            width: 44px;
+                            height: 44px;
+                            background: rgba(37, 99, 235, .12);
+                            color: var(--info);
+                        "
+                    >
+                        <i class="bi bi-pin-map fs-5"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Country -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="hm-card p-3 h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+
+                        <div class="text-muted small mb-1">
+                            Country
+                        </div>
+
+                        <div class="fs-6 fw-bold mt-2">
+                            {{ site.country|default:"—" }}
+                        </div>
+
+                        <div class="small text-muted">
+                            Operating region
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="rounded-3 d-flex align-items-center justify-content-center"
+                        style="
+                            width: 44px;
+                            height: 44px;
+                            background: rgba(168, 85, 247, .12);
+                            color: #a855f7;
+                        "
+                    >
+                        <i class="bi bi-globe2 fs-5"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <div class="row g-4">
+
+        <!-- =================================================
+             SITE INFORMATION
+        ================================================== -->
+
+        <div class="col-lg-5">
+
+            <div class="hm-card h-100">
+
+                <div
+                    class="p-4 border-bottom"
+                    style="border-color: var(--border) !important;"
+                >
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div
+                            class="rounded-3 d-flex align-items-center justify-content-center"
+                            style="
+                                width: 44px;
+                                height: 44px;
+                                background: rgba(245, 158, 11, .12);
+                                color: var(--primary);
+                            "
+                        >
+                            <i class="bi bi-info-circle fs-5"></i>
+                        </div>
+
+                        <div>
+
+                            <h5 class="fw-bold mb-1">
+                                Site Information
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+                                Basic information about this location.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="p-4">
+
+                    <!-- Company -->
+
+                    <div class="mb-4">
+
+                        <div class="text-muted small mb-1">
+                            Company
+                        </div>
+
+                        <a
+                            href="{% url 'companies:company_detail' site.company.pk %}"
+                            class="fw-semibold"
+                        >
+                            <i class="bi bi-building me-1"></i>
+                            {{ site.company.name }}
+                        </a>
+
+                    </div>
+
+
+                    <!-- Address -->
+
+                    <div class="mb-4">
+
+                        <div class="text-muted small mb-1">
+                            Address
+                        </div>
+
+                        <div class="fw-medium">
+
+                            {% if site.address %}
+                                {{ site.address }}
+                            {% else %}
+                                <span class="text-muted">
+                                    Not provided
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- City / State -->
+
+                    <div class="row g-3 mb-4">
+
+                        <div class="col-6">
+
+                            <div class="text-muted small mb-1">
+                                City
+                            </div>
+
+                            <div class="fw-medium">
+                                {{ site.city|default:"—" }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6">
+
+                            <div class="text-muted small mb-1">
+                                State
+                            </div>
+
+                            <div class="fw-medium">
+                                {{ site.state|default:"—" }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Country -->
+
+                    <div class="mb-4">
+
+                        <div class="text-muted small mb-1">
+                            Country
+                        </div>
+
+                        <div class="fw-medium">
+                            {{ site.country|default:"—" }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Contact -->
+
+                    <div class="pt-3 border-top"
+                         style="border-color: var(--border) !important;">
+
+                        <div class="text-muted small mb-3">
+                            Site Contact
+                        </div>
+
+                        {% if site.contact_person %}
+
+                            <div class="d-flex align-items-center gap-3 mb-3">
+
+                                <div
+                                    class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="
+                                        width: 38px;
+                                        height: 38px;
+                                        background: rgba(37, 99, 235, .12);
+                                        color: var(--info);
+                                    "
+                                >
+                                    <i class="bi bi-person"></i>
+                                </div>
+
+                                <div>
+
+                                    <div class="fw-semibold">
+                                        {{ site.contact_person }}
+                                    </div>
+
+                                    <div class="small text-muted">
+                                        Site Contact
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if site.contact_phone %}
+
+                            <a
+                                href="tel:{{ site.contact_phone }}"
+                                class="d-flex align-items-center gap-2 text-decoration-none"
+                            >
+                                <i class="bi bi-telephone"></i>
+                                {{ site.contact_phone }}
+                            </a>
+
+                        {% else %}
+
+                            <span class="text-muted small">
+                                No contact phone provided.
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             GPS INFORMATION
+        ================================================== -->
+
+        <div class="col-lg-7">
+
+            <div class="hm-card h-100">
+
+                <div
+                    class="p-4 border-bottom"
+                    style="border-color: var(--border) !important;"
+                >
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div class="d-flex align-items-center gap-3">
+
+                            <div
+                                class="rounded-3 d-flex align-items-center justify-content-center"
+                                style="
+                                    width: 44px;
+                                    height: 44px;
+                                    background: rgba(37, 99, 235, .12);
+                                    color: var(--info);
+                                "
+                            >
+                                <i class="bi bi-crosshair fs-5"></i>
+                            </div>
+
+                            <div>
+
+                                <h5 class="fw-bold mb-1">
+                                    GPS Location
+                                </h5>
+
+                                <p class="text-muted small mb-0">
+                                    Geographic coordinates for this site.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        {% if site.latitude and site.longitude %}
+
+                            <span class="hm-badge hm-badge-success">
+                                <i class="bi bi-check-circle"></i>
+                                Available
+                            </span>
+
+                        {% else %}
+
+                            <span class="hm-badge hm-badge-warning">
+                                <i class="bi bi-exclamation-circle"></i>
+                                Not Set
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="p-4">
+
+                    {% if site.latitude and site.longitude %}
+
+                        <div class="row g-3 mb-4">
+
+                            <div class="col-sm-6">
+
+                                <div
+                                    class="rounded-3 p-3"
+                                    style="
+                                        background: var(--bg-card-hover);
+                                        border: 1px solid var(--border);
+                                    "
+                                >
+
+                                    <div class="text-muted small mb-1">
+                                        Latitude
+                                    </div>
+
+                                    <div class="fs-5 fw-bold">
+                                        {{ site.latitude }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-sm-6">
+
+                                <div
+                                    class="rounded-3 p-3"
+                                    style="
+                                        background: var(--bg-card-hover);
+                                        border: 1px solid var(--border);
+                                    "
+                                >
+
+                                    <div class="text-muted small mb-1">
+                                        Longitude
+                                    </div>
+
+                                    <div class="fs-5 fw-bold">
+                                        {{ site.longitude }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="rounded-3 p-4 text-center"
+                            style="
+                                min-height: 170px;
+                                background:
+                                    linear-gradient(
+                                        135deg,
+                                        rgba(37,99,235,.08),
+                                        rgba(245,158,11,.08)
+                                    );
+                                border: 1px solid var(--border);
+                            "
+                        >
+
+                            <i class="bi bi-map fs-1 text-primary"></i>
+
+                            <div class="fw-semibold mt-2">
+                                GPS coordinates available
+                            </div>
+
+                            <div class="text-muted small mb-3">
+                                {{ site.latitude }},
+                                {{ site.longitude }}
+                            </div>
+
+                            <a
+                                href="https://www.google.com/maps/search/?api=1&query={{ site.latitude }},{{ site.longitude }}"
+                                target="_blank"
+                                rel="noopener"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                <i class="bi bi-map me-1"></i>
+                                Open Map
+                            </a>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-center py-5">
+
+                            <div
+                                class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                style="
+                                    width: 70px;
+                                    height: 70px;
+                                    background: rgba(245,158,11,.10);
+                                    color: var(--primary);
+                                "
+                            >
+                                <i class="bi bi-geo fs-2"></i>
+                            </div>
+
+                            <h6 class="fw-bold">
+                                GPS coordinates not available
+                            </h6>
+
+                            <p class="text-muted small mb-3">
+                                Add latitude and longitude to this site
+                                to enable map navigation.
+                            </p>
+
+                            <a
+                                href="{% url 'companies:site_update' site.pk %}"
+                                class="btn btn-sm btn-warning"
+                            >
+                                <i class="bi bi-pencil me-1"></i>
+                                Add Coordinates
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         EQUIPMENT
+    ====================================================== -->
+
+    <div class="hm-card mt-4">
+
+        <div
+            class="p-4 border-bottom"
+            style="border-color: var(--border) !important;"
+        >
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div
+                        class="rounded-3 d-flex align-items-center justify-content-center"
+                        style="
+                            width: 44px;
+                            height: 44px;
+                            background: rgba(245,158,11,.12);
+                            color: var(--primary);
+                        "
+                    >
+                        <i class="bi bi-truck fs-5"></i>
+                    </div>
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+                            Site Equipment
+                        </h5>
+
+                        <p class="text-muted small mb-0">
+                            Equipment currently assigned to this site.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="d-flex gap-2">
+
+                    <span class="hm-badge hm-badge-info">
+                        <i class="bi bi-box-seam"></i>
+                        {{ equipment|length }} Equipment
+                    </span>
+
+                    <a
+                        href="{% url 'equipment:create' %}?site={{ site.pk }}"
+                        class="btn btn-sm btn-warning"
+                    >
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Add Equipment
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% if equipment %}
+
+            <div class="table-responsive">
+
+                <table class="table align-middle mb-0">
+
+                    <thead>
+
+                        <tr>
+
+                            <th class="ps-4">
+                                Asset
+                            </th>
+
+                            <th>
+                                Equipment
+                            </th>
+
+                            <th>
+                                Type
+                            </th>
+
+                            <th>
+                                Hour Meter
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th class="text-end pe-4">
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for item in equipment %}
+
+                            <tr>
+
+                                <!-- Asset -->
+
+                                <td class="ps-4">
+
+                                    <div class="fw-bold">
+                                        {{ item.asset_number }}
+                                    </div>
+
+                                    {% if item.serial_number %}
+                                        <div class="small text-muted">
+                                            SN: {{ item.serial_number }}
+                                        </div>
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- Equipment -->
+
+                                <td>
+
+                                    <div class="fw-semibold">
+                                        {{ item.name }}
+                                    </div>
+
+                                    {% if item.manufacturer %}
+                                        <div class="small text-muted">
+                                            {{ item.manufacturer }}
+                                            {% if item.model %}
+                                                {{ item.model }}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- Type -->
+
+                                <td>
+
+                                    <span class="small">
+
+                                        {% if item.get_equipment_type_display %}
+                                            {{ item.get_equipment_type_display }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Hours -->
+
+                                <td>
+
+                                    <div class="fw-bold">
+                                        {{ item.current_hours|floatformat:1 }}
+                                    </div>
+
+                                    <div class="small text-muted">
+                                        operating hours
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Status -->
+
+                                <td>
+
+                                    {% if item.status == "active" %}
+
+                                        <span class="hm-badge hm-badge-success">
+                                            <i class="bi bi-circle-fill"
+                                               style="font-size:6px;"></i>
+                                            Active
+                                        </span>
+
+                                    {% elif item.status == "idle" %}
+
+                                        <span class="hm-badge hm-badge-info">
+                                            <i class="bi bi-circle-fill"
+                                               style="font-size:6px;"></i>
+                                            Idle
+                                        </span>
+
+                                    {% elif item.status == "maintenance" %}
+
+                                        <span class="hm-badge hm-badge-warning">
+                                            <i class="bi bi-wrench"></i>
+                                            Maintenance
+                                        </span>
+
+                                    {% elif item.status == "out_of_service" %}
+
+                                        <span class="hm-badge hm-badge-danger">
+                                            <i class="bi bi-x-circle"></i>
+                                            Out of Service
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="hm-badge hm-badge-danger">
+                                            Retired
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- Action -->
+
+                                <td class="text-end pe-4">
+
+                                    <a
+                                        href="{% url 'equipment:detail' item.pk %}"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        title="View equipment"
+                                    >
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-5">
+
+                <div
+                    class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                    style="
+                        width: 70px;
+                        height: 70px;
+                        background: rgba(245,158,11,.10);
+                        color: var(--primary);
+                    "
+                >
+                    <i class="bi bi-truck fs-2"></i>
+                </div>
+
+                <h5 class="fw-bold">
+                    No equipment assigned
+                </h5>
+
+                <p class="text-muted mb-3">
+                    There is currently no equipment assigned
+                    to this operating site.
+                </p>
+
+                <a
+                    href="{% url 'equipment:create' %}?site={{ site.pk }}"
+                    class="btn btn-warning"
+                >
+                    <i class="bi bi-plus-lg me-1"></i>
+                    Add Equipment
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER INFORMATION
+    ====================================================== -->
+
+    <div class="row g-3 mt-1">
+
+        <div class="col-md-6">
+
+            <div class="small text-muted">
+
+                <i class="bi bi-clock-history me-1"></i>
+
+                Created:
+                {{ site.created_at|date:"d M Y, H:i" }}
+
+                {% if site.created_by %}
+                    by {{ site.created_by.get_full_name|default:site.created_by.username }}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 text-md-end">
+
+            <div class="small text-muted">
+
+                <i class="bi bi-arrow-repeat me-1"></i>
+
+                Last updated:
+                {{ site.updated_at|date:"d M Y, H:i" }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

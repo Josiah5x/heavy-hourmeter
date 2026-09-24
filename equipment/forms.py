@@ -7,6 +7,7 @@ from companies.models import Site
 
 
 class EquipmentForm(forms.ModelForm):
+
     class Meta:
         model = Equipment
 
@@ -46,6 +47,7 @@ class EquipmentForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "placeholder": "e.g. EXC-001",
+                    "autocomplete": "off",
                 }
             ),
 
@@ -117,7 +119,7 @@ class EquipmentForm(forms.ModelForm):
             "image": forms.ClearableFileInput(
                 attrs={
                     "class": "form-control",
-                    "accept": "image/*",
+                    "accept": "image/jpeg,image/png,image/webp",
                 }
             ),
 
@@ -166,101 +168,242 @@ class EquipmentForm(forms.ModelForm):
         help_texts = {
             "asset_number": "Must be unique within the selected company.",
             "current_hours": "Enter the current accumulated operating hours.",
-            "image": "Recommended formats: JPG, JPEG or PNG.",
+            "image": "JPG, PNG or WebP recommended.",
         }
 
     def __init__(self, *args, **kwargs):
+
         super().__init__(*args, **kwargs)
 
-        # Make optional fields explicit
-        self.fields["site"].required = False
-        self.fields["manufacturer"].required = False
-        self.fields["model"].required = False
-        self.fields["serial_number"].required = False
-        self.fields["registration_number"].required = False
-        self.fields["year"].required = False
-        self.fields["image"].required = False
-        self.fields["description"].required = False
-        self.fields["purchase_date"].required = False
-        self.fields["commissioning_date"].required = False
+        # --------------------------------------------------
+        # OPTIONAL FIELDS
+        # --------------------------------------------------
 
-        # Better empty option
+        optional_fields = [
+            "site",
+            "manufacturer",
+            "model",
+            "serial_number",
+            "registration_number",
+            "year",
+            "image",
+            "description",
+            "purchase_date",
+            "commissioning_date",
+        ]
+
+        for field_name in optional_fields:
+            self.fields[field_name].required = False
+
+
+        # --------------------------------------------------
+        # SITE DROPDOWN
+        # --------------------------------------------------
+
+        self.fields["site"].queryset = Site.objects.none()
+
         self.fields["site"].empty_label = "Select operating site"
 
+
+        # --------------------------------------------------
+        # CREATE / EDIT
+        # --------------------------------------------------
+
+        company = None
+
+        # Editing an existing equipment record
+        if self.instance and self.instance.pk:
+
+            company = self.instance.company
+
+
+        # Form was submitted
+        if self.is_bound:
+
+            company_id = self.data.get("company")
+
+            if company_id:
+
+                try:
+                    company = self.instance.company.__class__.objects.get(
+                        pk=company_id
+                    )
+                except company.__class__.DoesNotExist:
+                    company = None
+
+                except Exception:
+                    company = None
+
+
+        if company:
+
+            self.fields["site"].queryset = Site.objects.filter(
+                company=company,
+                is_active=True,
+            ).order_by("name")
+
+
+    # ======================================================
+    # ASSET NUMBER
+    # ======================================================
+
     def clean_asset_number(self):
-        asset_number = self.cleaned_data.get("asset_number", "").strip()
+
+        asset_number = self.cleaned_data.get(
+            "asset_number",
+            ""
+        ).strip()
 
         if not asset_number:
-            raise ValidationError("Asset number is required.")
+
+            raise ValidationError(
+                "Asset number is required."
+            )
 
         return asset_number.upper()
 
+
+    # ======================================================
+    # EQUIPMENT NAME
+    # ======================================================
+
     def clean_name(self):
-        name = self.cleaned_data.get("name", "").strip()
+
+        name = self.cleaned_data.get(
+            "name",
+            ""
+        ).strip()
 
         if not name:
-            raise ValidationError("Equipment name is required.")
+
+            raise ValidationError(
+                "Equipment name is required."
+            )
 
         return name
 
+
+    # ======================================================
+    # MANUFACTURING YEAR
+    # ======================================================
+
     def clean_year(self):
+
         year = self.cleaned_data.get("year")
 
         if year:
+
             current_year = timezone.now().year
 
             if year < 1900:
+
                 raise ValidationError(
                     "Manufacturing year cannot be earlier than 1900."
                 )
 
             if year > current_year + 1:
+
                 raise ValidationError(
-                    f"Manufacturing year cannot be later than {current_year + 1}."
+                    f"Manufacturing year cannot be later than "
+                    f"{current_year + 1}."
                 )
 
         return year
 
+
+    # ======================================================
+    # CURRENT HOURS
+    # ======================================================
+
     def clean_current_hours(self):
-        hours = self.cleaned_data.get("current_hours")
+
+        hours = self.cleaned_data.get(
+            "current_hours"
+        )
 
         if hours is not None and hours < 0:
+
             raise ValidationError(
                 "Hour meter reading cannot be negative."
             )
 
         return hours
 
+
+    # ======================================================
+    # MAIN VALIDATION
+    # ======================================================
+
     def clean(self):
+
         cleaned_data = super().clean()
 
         company = cleaned_data.get("company")
+        site = cleaned_data.get("site")
         asset_number = cleaned_data.get("asset_number")
 
+        # --------------------------------------------------
+        # COMPANY + SITE VALIDATION
+        # --------------------------------------------------
+
+        if company and site:
+
+            if site.company_id != company.id:
+
+                self.add_error(
+                    "site",
+                    "The selected site does not belong to "
+                    "the selected company."
+                )
+
+
+        # --------------------------------------------------
+        # UNIQUE ASSET NUMBER
+        # --------------------------------------------------
+
         if company and asset_number:
+
             qs = Equipment.objects.filter(
                 company=company,
                 asset_number__iexact=asset_number,
             )
 
-            # Don't treat the current object as a duplicate during editing.
             if self.instance and self.instance.pk:
-                qs = qs.exclude(pk=self.instance.pk)
+
+                qs = qs.exclude(
+                    pk=self.instance.pk
+                )
 
             if qs.exists():
+
                 self.add_error(
                     "asset_number",
-                    "This asset number already exists for this company.",
+                    "This asset number already exists "
+                    "for this company."
                 )
 
-        purchase_date = cleaned_data.get("purchase_date")
-        commissioning_date = cleaned_data.get("commissioning_date")
+
+        # --------------------------------------------------
+        # DATE VALIDATION
+        # --------------------------------------------------
+
+        purchase_date = cleaned_data.get(
+            "purchase_date"
+        )
+
+        commissioning_date = cleaned_data.get(
+            "commissioning_date"
+        )
 
         if purchase_date and commissioning_date:
+
             if commissioning_date < purchase_date:
+
                 self.add_error(
                     "commissioning_date",
-                    "Commissioning date cannot be earlier than the purchase date.",
+                    "Commissioning date cannot be "
+                    "earlier than the purchase date."
                 )
+
 
         return cleaned_data

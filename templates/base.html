@@ -659,9 +659,384 @@ html[data-theme="light"] .table tbody tr:hover {
     background: #f8fafc;
 }
 
+
+
+/* //////////////////////////////// */
+
+
+    /* ==========================================
+       PAGE HEADER
+    ========================================== */
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .page-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: rgba(245, 158, 11, .12);
+        color: var(--primary);
+        font-size: 20px;
+    }
+
+
+    /* ==========================================
+       CARD
+    ========================================== */
+
+    .hm-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .hm-card-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--border);
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .hm-card-body {
+        padding: 20px;
+    }
+
+
+    /* ==========================================
+       FORM
+    ========================================== */
+
+    .form-label {
+        color: var(--text-main);
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .form-control,
+    .form-select,
+    textarea.form-control {
+
+        background-color: var(--input-bg) !important;
+        color: var(--text-main) !important;
+
+        border: 1px solid var(--border) !important;
+
+        border-radius: 8px;
+
+    }
+
+
+    .form-control,
+    .form-select {
+
+        min-height: 44px;
+
+    }
+
+
+    textarea.form-control {
+
+        min-height: 130px;
+        resize: vertical;
+
+    }
+
+
+    .form-control::placeholder {
+
+        color: var(--text-muted) !important;
+        opacity: .7;
+
+    }
+
+
+    .form-control:focus,
+    .form-select:focus,
+    textarea.form-control:focus {
+
+        background-color: var(--input-bg) !important;
+
+        color: var(--text-main) !important;
+
+        border-color: var(--primary) !important;
+
+        box-shadow:
+            0 0 0 .2rem rgba(245, 158, 11, .12) !important;
+
+    }
+
+
+    /* ==========================================
+       SELECT
+    ========================================== */
+
+    html[data-theme="dark"] .form-select {
+
+        color-scheme: dark;
+
+    }
+
+    html[data-theme="light"] .form-select {
+
+        color-scheme: light;
+
+    }
+
+
+    /* ==========================================
+       INPUT GROUP
+    ========================================== */
+
+    .input-group-text {
+
+        background: var(--bg-card-hover) !important;
+
+        color: var(--text-muted) !important;
+
+        border-color: var(--border) !important;
+
+    }
+
+
+    /* ==========================================
+       HOUR METER
+    ========================================== */
+
+    .hour-badge {
+
+        font-size: 10px;
+
+        font-weight: 700;
+
+        letter-spacing: 1px;
+
+        padding: 6px 10px;
+
+        border-radius: 20px;
+
+        background: rgba(245, 158, 11, .12);
+
+        color: var(--primary);
+
+    }
+
+
+    .meter-info {
+
+        padding: 11px 13px;
+
+        border-radius: 8px;
+
+        background: rgba(245, 158, 11, .07);
+
+        border: 1px solid rgba(245, 158, 11, .15);
+
+        color: var(--text-muted);
+
+        font-size: 12px;
+
+    }
+
+
+    /* ==========================================
+       IMAGE
+    ========================================== */
+
+    .equipment-image {
+
+        width: 100%;
+
+        height: 230px;
+
+        border-radius: 10px;
+
+        overflow: hidden;
+
+        border: 1px solid var(--border);
+
+        background: var(--bg-main);
+
+    }
+
+
+    .equipment-image img {
+
+        width: 100%;
+
+        height: 100%;
+
+        object-fit: cover;
+
+    }
+
+
+    .image-placeholder {
+
+        height: 230px;
+
+        border-radius: 10px;
+
+        border: 1px dashed var(--border);
+
+        background: var(--bg-main);
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 10px;
+
+        color: var(--text-muted);
+
+    }
+
+
+    .image-placeholder i {
+
+        font-size: 45px;
+
+        opacity: .35;
+
+    }
+
+
+    .image-placeholder span {
+
+        font-size: 12px;
+
+    }
+
+
+    /* ==========================================
+       SUMMARY
+    ========================================== */
+
+    .summary-row {
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        padding: 12px 0;
+
+        border-bottom: 1px solid var(--border);
+
+        font-size: 13px;
+
+    }
+
+
+    .summary-row:last-child {
+
+        border-bottom: 0;
+
+        padding-bottom: 0;
+
+    }
+
+
+    .summary-row:first-child {
+
+        padding-top: 0;
+
+    }
+
+
+    .summary-row span {
+
+        color: var(--text-muted);
+
+    }
+
+
+    .summary-row strong {
+
+        font-size: 11px;
+
+        color: var(--primary);
+
+        text-transform: uppercase;
+
+        letter-spacing: .4px;
+
+    }
+
+
+    .summary-row small {
+
+        color: var(--text-muted);
+
+        font-size: 11px;
+
+    }
+
+
+    /* ==========================================
+       BUTTON
+    ========================================== */
+
+    .btn-warning {
+
+        color: #111827;
+
+        font-weight: 600;
+
+    }
+
+
+    /* ==========================================
+       MOBILE
+    ========================================== */
+
+    @media (max-width: 767px) {
+
+        .page-header {
+
+            align-items: flex-start;
+
+            flex-direction: column;
+
+        }
+
+        .page-header > a {
+
+            width: 100%;
+
+        }
+
+        .page-header > a .btn {
+
+            width: 100%;
+
+        }
+
+    }
+
+
+
     </style>
 
-    {% block extra_css %}{% endblock %}
+    {% block extra_css %}
+
+    {% endblock %}
 
 </head>
 
@@ -792,7 +1167,7 @@ html[data-theme="light"] .table tbody tr:hover {
             Management
         </div>
 
-        <a href="{% url 'companies:list' %}"
+        <a href="{% url 'companies:company_list' %}"
            class="sidebar-link">
 
             <i class="bi bi-building"></i>

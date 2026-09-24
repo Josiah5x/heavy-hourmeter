@@ -1,12 +1,17 @@
+from django.conf import settings
 from django.db import models
 
 
 class Company(models.Model):
-    name = models.CharField(max_length=200)
 
-    code = models.CharField(
-        max_length=50,
+    name = models.CharField(
+        max_length=200,
         unique=True
+    )
+
+    short_name = models.CharField(
+        max_length=50,
+        blank=True
     )
 
     address = models.TextField(
@@ -22,6 +27,10 @@ class Company(models.Model):
         blank=True
     )
 
+    website = models.URLField(
+        blank=True
+    )
+
     logo = models.ImageField(
         upload_to="companies/logos/",
         blank=True,
@@ -32,15 +41,33 @@ class Company(models.Model):
         default=True
     )
 
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_companies"
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Company"
+        verbose_name_plural = "Companies"
 
     def __str__(self):
         return self.name
 
 
 class Site(models.Model):
+
     company = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
@@ -52,11 +79,27 @@ class Site(models.Model):
     )
 
     code = models.CharField(
-        max_length=50
+        max_length=50,
+        blank=True
     )
 
     address = models.TextField(
         blank=True
+    )
+
+    city = models.CharField(
+        max_length=100,
+        blank=True
+    )
+
+    state = models.CharField(
+        max_length=100,
+        blank=True
+    )
+
+    country = models.CharField(
+        max_length=100,
+        default="Nigeria"
     )
 
     contact_person = models.CharField(
@@ -64,8 +107,22 @@ class Site(models.Model):
         blank=True
     )
 
-    phone = models.CharField(
+    contact_phone = models.CharField(
         max_length=50,
+        blank=True
+    )
+
+    latitude = models.DecimalField(
+        max_digits=10,
+        decimal_places=7,
+        null=True,
+        blank=True
+    )
+
+    longitude = models.DecimalField(
+        max_digits=10,
+        decimal_places=7,
+        null=True,
         blank=True
     )
 
@@ -73,18 +130,38 @@ class Site(models.Model):
         default=True
     )
 
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_sites"
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )
 
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
     class Meta:
-        ordering = ["name"]
+        ordering = ["company", "name"]
+        verbose_name = "Site"
+        verbose_name_plural = "Sites"
+
         constraints = [
+            models.UniqueConstraint(
+                fields=["company", "name"],
+                name="unique_site_name_per_company"
+            ),
+
             models.UniqueConstraint(
                 fields=["company", "code"],
                 name="unique_site_code_per_company"
-            )
+            ),
         ]
 
     def __str__(self):
-        return f"{self.name} ({self.company.name})"
+        return f"{self.company.name} - {self.name}"

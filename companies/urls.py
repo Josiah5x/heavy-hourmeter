@@ -7,38 +7,44 @@ app_name = "companies"
 
 
 urlpatterns = [
-    # Companies
+    # ========================================================
+    # COMPANIES
+    # ========================================================
+
     path(
         "",
         views.company_list,
-        name="list",
+        name="company_list",
     ),
 
     path(
         "create/",
         views.company_create,
-        name="create",
+        name="company_create",
     ),
 
     path(
         "<int:pk>/",
         views.company_detail,
-        name="detail",
+        name="company_detail",
     ),
 
     path(
         "<int:pk>/edit/",
         views.company_update,
-        name="update",
+        name="company_update",
     ),
 
     path(
         "<int:pk>/delete/",
         views.company_delete,
-        name="delete",
+        name="company_delete",
     ),
 
-    # Sites
+    # ========================================================
+    # SITES
+    # ========================================================
+
     path(
         "sites/",
         views.site_list,

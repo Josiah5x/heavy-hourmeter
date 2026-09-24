@@ -1,0 +1,1322 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if object %}
+        Edit Equipment
+    {% else %}
+        Add Equipment
+    {% endif %}
+    | HeavyMeter
+{% endblock %}
+
+{% block page_title %}
+    {% if object %}
+        Edit Equipment
+    {% else %}
+        Add Equipment
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="page-header mb-4">
+
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <div class="page-icon">
+                    <i class="bi bi-truck-front-fill"></i>
+                </div>
+
+                <h4 class="mb-0 fw-bold">
+
+                    {% if object %}
+                        Edit Equipment
+                    {% else %}
+                        Register Equipment
+                    {% endif %}
+
+                </h4>
+
+            </div>
+
+            <p class="text-muted mb-0">
+                {% if object %}
+                    Update equipment information and operating details.
+                {% else %}
+                    Register a heavy-duty machine into your fleet.
+                {% endif %}
+            </p>
+        </div>
+
+
+        <a href="{% url 'equipment:list' %}"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+
+            Back to Equipment
+
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORM ERRORS
+    ====================================================== -->
+
+    {% if form.non_field_errors %}
+
+        <div class="alert alert-danger">
+
+            <i class="bi bi-exclamation-triangle me-2"></i>
+
+            {{ form.non_field_errors }}
+
+        </div>
+
+    {% endif %}
+
+
+    <form method="post"
+          enctype="multipart/form-data"
+          novalidate>
+
+        {% csrf_token %}
+
+
+        <div class="row g-4">
+
+
+            <!-- =================================================
+                 LEFT COLUMN
+            ================================================== -->
+
+            <div class="col-xl-8">
+
+
+                <!-- =================================================
+                     EQUIPMENT IDENTIFICATION
+                ================================================== -->
+
+                <div class="hm-card mb-4">
+
+                    <div class="hm-card-header">
+
+                        <div>
+
+                            <h5 class="mb-1">
+                                <i class="bi bi-card-heading text-warning me-2"></i>
+                                Equipment Identification
+                            </h5>
+
+                            <small class="text-muted">
+                                Basic information used to identify the machine.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="hm-card-body">
+
+                        <div class="row g-3">
+
+
+                            <!-- COMPANY -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.company.id_for_label }}"
+                                       class="form-label">
+
+                                    Company
+
+                                    <span class="text-danger">*</span>
+
+                                </label>
+
+                                {{ form.company }}
+
+                                {% if form.company.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.company.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- SITE -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.site.id_for_label }}"
+                                       class="form-label">
+
+                                    Operating Site
+
+                                </label>
+
+                                {{ form.site }}
+
+                                {% if form.site.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.site.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- ASSET NUMBER -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.asset_number.id_for_label }}"
+                                       class="form-label">
+
+                                    Asset Number
+
+                                    <span class="text-danger">*</span>
+
+                                </label>
+
+                                {{ form.asset_number }}
+
+                                {% if form.asset_number.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.asset_number.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% if form.asset_number.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.asset_number.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- NAME -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.name.id_for_label }}"
+                                       class="form-label">
+
+                                    Equipment Name
+
+                                    <span class="text-danger">*</span>
+
+                                </label>
+
+                                {{ form.name }}
+
+                                {% if form.name.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.name.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- TYPE -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.equipment_type.id_for_label }}"
+                                       class="form-label">
+
+                                    Equipment Type
+
+                                    <span class="text-danger">*</span>
+
+                                </label>
+
+                                {{ form.equipment_type }}
+
+                                {% if form.equipment_type.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.equipment_type.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- STATUS -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.status.id_for_label }}"
+                                       class="form-label">
+
+                                    Equipment Status
+
+                                    <span class="text-danger">*</span>
+
+                                </label>
+
+                                {{ form.status }}
+
+                                {% if form.status.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.status.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     MANUFACTURER DETAILS
+                ================================================== -->
+
+                <div class="hm-card mb-4">
+
+                    <div class="hm-card-header">
+
+                        <div>
+
+                            <h5 class="mb-1">
+
+                                <i class="bi bi-gear-wide-connected text-warning me-2"></i>
+
+                                Manufacturer & Technical Details
+
+                            </h5>
+
+                            <small class="text-muted">
+
+                                Manufacturer and machine identification details.
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="hm-card-body">
+
+                        <div class="row g-3">
+
+
+                            <!-- MANUFACTURER -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.manufacturer.id_for_label }}"
+                                       class="form-label">
+
+                                    Manufacturer
+
+                                </label>
+
+                                {{ form.manufacturer }}
+
+                                {% if form.manufacturer.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.manufacturer.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- MODEL -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.model.id_for_label }}"
+                                       class="form-label">
+
+                                    Model
+
+                                </label>
+
+                                {{ form.model }}
+
+                                {% if form.model.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.model.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- SERIAL -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.serial_number.id_for_label }}"
+                                       class="form-label">
+
+                                    Serial Number
+
+                                </label>
+
+                                {{ form.serial_number }}
+
+                                {% if form.serial_number.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.serial_number.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- REGISTRATION -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.registration_number.id_for_label }}"
+                                       class="form-label">
+
+                                    Registration Number
+
+                                </label>
+
+                                {{ form.registration_number }}
+
+                                {% if form.registration_number.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.registration_number.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- YEAR -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.year.id_for_label }}"
+                                       class="form-label">
+
+                                    Manufacturing Year
+
+                                </label>
+
+                                {{ form.year }}
+
+                                {% if form.year.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.year.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     HOUR METER
+                ================================================== -->
+
+                <div class="hm-card mb-4">
+
+                    <div class="hm-card-header">
+
+                        <div>
+
+                            <h5 class="mb-1">
+
+                                <i class="bi bi-speedometer2 text-warning me-2"></i>
+
+                                Hour Meter
+
+                            </h5>
+
+                            <small class="text-muted">
+
+                                Record the machine's current operating-hour reading.
+
+                            </small>
+
+                        </div>
+
+                        <span class="hour-badge">
+
+                            <i class="bi bi-clock me-1"></i>
+
+                            HOURS
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="hm-card-body">
+
+                        <label for="{{ form.current_hours.id_for_label }}"
+                               class="form-label">
+
+                            Current Hour Meter
+
+                            <span class="text-danger">*</span>
+
+                        </label>
+
+
+                        <div class="input-group input-group-lg">
+
+                            {{ form.current_hours }}
+
+                            <span class="input-group-text">
+
+                                hrs
+
+                            </span>
+
+                        </div>
+
+
+                        {% if form.current_hours.help_text %}
+
+                            <div class="form-text">
+
+                                {{ form.current_hours.help_text }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if form.current_hours.errors %}
+
+                            <div class="invalid-feedback d-block">
+
+                                {{ form.current_hours.errors|striptags }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="meter-info mt-3">
+
+                            <i class="bi bi-info-circle me-2"></i>
+
+                            Enter the exact reading displayed on the
+                            machine's physical hour meter.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     DATES
+                ================================================== -->
+
+                <div class="hm-card mb-4">
+
+                    <div class="hm-card-header">
+
+                        <div>
+
+                            <h5 class="mb-1">
+
+                                <i class="bi bi-calendar3 text-warning me-2"></i>
+
+                                Equipment Dates
+
+                            </h5>
+
+                            <small class="text-muted">
+
+                                Purchase and commissioning information.
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="hm-card-body">
+
+                        <div class="row g-3">
+
+
+                            <!-- PURCHASE -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.purchase_date.id_for_label }}"
+                                       class="form-label">
+
+                                    Purchase Date
+
+                                </label>
+
+                                {{ form.purchase_date }}
+
+                                {% if form.purchase_date.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.purchase_date.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- COMMISSIONING -->
+
+                            <div class="col-md-6">
+
+                                <label for="{{ form.commissioning_date.id_for_label }}"
+                                       class="form-label">
+
+                                    Commissioning Date
+
+                                </label>
+
+                                {{ form.commissioning_date }}
+
+                                {% if form.commissioning_date.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.commissioning_date.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     DESCRIPTION
+                ================================================== -->
+
+                <div class="hm-card mb-4">
+
+                    <div class="hm-card-header">
+
+                        <div>
+
+                            <h5 class="mb-1">
+
+                                <i class="bi bi-card-text text-warning me-2"></i>
+
+                                Description
+
+                            </h5>
+
+                            <small class="text-muted">
+
+                                Additional information about the equipment.
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="hm-card-body">
+
+                        {{ form.description }}
+
+                        {% if form.description.errors %}
+
+                            <div class="invalid-feedback d-block">
+                                {{ form.description.errors|striptags }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT COLUMN
+            ================================================== -->
+
+            <div class="col-xl-4">
+
+
+                <!-- =================================================
+                     IMAGE
+                ================================================== -->
+
+                <div class="hm-card mb-4">
+
+                    <div class="hm-card-header">
+
+                        <div>
+
+                            <h5 class="mb-1">
+
+                                <i class="bi bi-camera text-warning me-2"></i>
+
+                                Equipment Image
+
+                            </h5>
+
+                            <small class="text-muted">
+
+                                Machine photograph.
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="hm-card-body">
+
+
+                        {% if object and object.image %}
+
+                            <div class="equipment-image mb-3">
+
+                                <img src="{{ object.image.url }}"
+                                     alt="{{ object.name }}">
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="image-placeholder mb-3">
+
+                                <i class="bi bi-truck-front"></i>
+
+                                <span>
+                                    No image uploaded
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <label for="{{ form.image.id_for_label }}"
+                               class="form-label">
+
+                            Upload Image
+
+                        </label>
+
+
+                        {{ form.image }}
+
+
+                        {% if form.image.help_text %}
+
+                            <div class="form-text mt-2">
+                                {{ form.image.help_text }}
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if form.image.errors %}
+
+                            <div class="invalid-feedback d-block">
+
+                                {{ form.image.errors|striptags }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     REGISTRATION SUMMARY
+                ================================================== -->
+
+                <div class="hm-card mb-4">
+
+                    <div class="hm-card-header">
+
+                        <h5 class="mb-0">
+
+                            <i class="bi bi-clipboard-check text-warning me-2"></i>
+
+                            Registration Summary
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="hm-card-body">
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Company
+                            </span>
+
+                            <strong>
+                                Required
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Asset Number
+                            </span>
+
+                            <strong>
+                                Required
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Equipment Type
+                            </span>
+
+                            <strong>
+                                Required
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Hour Meter
+                            </span>
+
+                            <strong>
+                                Required
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Operating Site
+                            </span>
+
+                            <small>
+                                Optional
+                            </small>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Equipment Image
+                            </span>
+
+                            <small>
+                                Optional
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ACTIONS
+                ================================================== -->
+
+                <div class="hm-card">
+
+                    <div class="hm-card-body">
+
+
+                        <button type="submit"
+                                class="btn btn-warning btn-lg w-100 mb-2">
+
+                            <i class="bi bi-check-circle me-2"></i>
+
+                            {% if object %}
+                                Update Equipment
+                            {% else %}
+                                Register Equipment
+                            {% endif %}
+
+                        </button>
+
+
+                        <a href="{% url 'equipment:list' %}"
+                           class="btn btn-outline-secondary w-100">
+
+                            <i class="bi bi-x-circle me-2"></i>
+
+                            Cancel
+
+                        </a>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    /* ==========================================
+       PAGE HEADER
+    ========================================== */
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .page-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: rgba(245, 158, 11, .12);
+        color: var(--primary);
+        font-size: 20px;
+    }
+
+
+    /* ==========================================
+       CARD
+    ========================================== */
+
+    .hm-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .hm-card-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--border);
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .hm-card-body {
+        padding: 20px;
+    }
+
+
+    /* ==========================================
+       FORM
+    ========================================== */
+
+    .form-label {
+        color: var(--text-main);
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .form-control,
+    .form-select,
+    textarea.form-control {
+
+        background-color: var(--input-bg) !important;
+        color: var(--text-main) !important;
+
+        border: 1px solid var(--border) !important;
+
+        border-radius: 8px;
+
+    }
+
+
+    .form-control,
+    .form-select {
+
+        min-height: 44px;
+
+    }
+
+
+    textarea.form-control {
+
+        min-height: 130px;
+        resize: vertical;
+
+    }
+
+
+    .form-control::placeholder {
+
+        color: var(--text-muted) !important;
+        opacity: .7;
+
+    }
+
+
+    .form-control:focus,
+    .form-select:focus,
+    textarea.form-control:focus {
+
+        background-color: var(--input-bg) !important;
+
+        color: var(--text-main) !important;
+
+        border-color: var(--primary) !important;
+
+        box-shadow:
+            0 0 0 .2rem rgba(245, 158, 11, .12) !important;
+
+    }
+
+
+    /* ==========================================
+       SELECT
+    ========================================== */
+
+    html[data-theme="dark"] .form-select {
+
+        color-scheme: dark;
+
+    }
+
+    html[data-theme="light"] .form-select {
+
+        color-scheme: light;
+
+    }
+
+
+    /* ==========================================
+       INPUT GROUP
+    ========================================== */
+
+    .input-group-text {
+
+        background: var(--bg-card-hover) !important;
+
+        color: var(--text-muted) !important;
+
+        border-color: var(--border) !important;
+
+    }
+
+
+    /* ==========================================
+       HOUR METER
+    ========================================== */
+
+    .hour-badge {
+
+        font-size: 10px;
+
+        font-weight: 700;
+
+        letter-spacing: 1px;
+
+        padding: 6px 10px;
+
+        border-radius: 20px;
+
+        background: rgba(245, 158, 11, .12);
+
+        color: var(--primary);
+
+    }
+
+
+    .meter-info {
+
+        padding: 11px 13px;
+
+        border-radius: 8px;
+
+        background: rgba(245, 158, 11, .07);
+
+        border: 1px solid rgba(245, 158, 11, .15);
+
+        color: var(--text-muted);
+
+        font-size: 12px;
+
+    }
+
+
+    /* ==========================================
+       IMAGE
+    ========================================== */
+
+    .equipment-image {
+
+        width: 100%;
+
+        height: 230px;
+
+        border-radius: 10px;
+
+        overflow: hidden;
+
+        border: 1px solid var(--border);
+
+        background: var(--bg-main);
+
+    }
+
+
+    .equipment-image img {
+
+        width: 100%;
+
+        height: 100%;
+
+        object-fit: cover;
+
+    }
+
+
+    .image-placeholder {
+
+        height: 230px;
+
+        border-radius: 10px;
+
+        border: 1px dashed var(--border);
+
+        background: var(--bg-main);
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 10px;
+
+        color: var(--text-muted);
+
+    }
+
+
+    .image-placeholder i {
+
+        font-size: 45px;
+
+        opacity: .35;
+
+    }
+
+
+    .image-placeholder span {
+
+        font-size: 12px;
+
+    }
+
+
+    /* ==========================================
+       SUMMARY
+    ========================================== */
+
+    .summary-row {
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        padding: 12px 0;
+
+        border-bottom: 1px solid var(--border);
+
+        font-size: 13px;
+
+    }
+
+
+    .summary-row:last-child {
+
+        border-bottom: 0;
+
+        padding-bottom: 0;
+
+    }
+
+
+    .summary-row:first-child {
+
+        padding-top: 0;
+
+    }
+
+
+    .summary-row span {
+
+        color: var(--text-muted);
+
+    }
+
+
+    .summary-row strong {
+
+        font-size: 11px;
+
+        color: var(--primary);
+
+        text-transform: uppercase;
+
+        letter-spacing: .4px;
+
+    }
+
+
+    .summary-row small {
+
+        color: var(--text-muted);
+
+        font-size: 11px;
+
+    }
+
+
+    /* ==========================================
+       BUTTON
+    ========================================== */
+
+    .btn-warning {
+
+        color: #111827;
+
+        font-weight: 600;
+
+    }
+
+
+    /* ==========================================
+       MOBILE
+    ========================================== */
+
+    @media (max-width: 767px) {
+
+        .page-header {
+
+            align-items: flex-start;
+
+            flex-direction: column;
+
+        }
+
+        .page-header > a {
+
+            width: 100%;
+
+        }
+
+        .page-header > a .btn {
+
+            width: 100%;
+
+        }
+
+    }
+
+</style>
+
+{% endblock %}
