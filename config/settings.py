@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "equipment",
     "operators",
     "dashboard",
+    "hourmeter",
 ]
 
 MIDDLEWARE = [

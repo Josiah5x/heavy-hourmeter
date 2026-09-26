@@ -1,0 +1,306 @@
+
+{% extends "base.html" %}
+
+{% block title %}Hour Meter Readings | HeavyMeter{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+        <div>
+
+            <h4 class="fw-bold mb-1">
+                Hour Meter Readings
+            </h4>
+
+            <div class="text-muted small">
+                Complete equipment hour-meter history.
+            </div>
+
+        </div>
+
+        <a
+            href="{% url 'hourmeter:reading_create' %}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-plus-lg me-1"></i>
+            Add Reading
+        </a>
+
+    </div>
+
+
+    <!-- Filters -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form method="get" class="row g-3">
+
+                <div class="col-lg-4">
+
+                    <label class="form-label">
+                        Search
+                    </label>
+
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ request.GET.q }}"
+                        class="form-control"
+                        placeholder="Equipment or fleet number..."
+                    >
+
+                </div>
+
+                <div class="col-lg-3">
+
+                    <label class="form-label">
+                        Reading Type
+                    </label>
+
+                    <select name="reading_type" class="form-select">
+
+                        <option value="">
+                            All Types
+                        </option>
+
+                        {% for value, label in reading_types %}
+
+                            <option
+                                value="{{ value }}"
+                                {% if request.GET.reading_type == value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-lg-3">
+
+                    <label class="form-label">
+                        Verification
+                    </label>
+
+                    <select name="verified" class="form-select">
+
+                        <option value="">
+                            All
+                        </option>
+
+                        <option
+                            value="yes"
+                            {% if request.GET.verified == "yes" %}selected{% endif %}
+                        >
+                            Verified
+                        </option>
+
+                        <option
+                            value="no"
+                            {% if request.GET.verified == "no" %}selected{% endif %}
+                        >
+                            Pending
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-lg-2 d-flex align-items-end">
+
+                    <button class="btn btn-primary w-100">
+                        <i class="bi bi-search me-1"></i>
+                        Search
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Table -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>S/N</th>
+                        <th>Equipment</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Previous HM</th>
+                        <th>Current HM</th>
+                        <th>Worked</th>
+                        <th>Type</th>
+                        <th>Verification</th>
+                        <th></th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for reading in page_obj %}
+
+                    <tr>
+
+                        <td>
+                            {{ page_obj.start_index|add:forloop.counter0 }}
+                        </td>
+
+                        <td>
+
+                            <div class="fw-semibold">
+                                {{ reading.equipment.name }}
+                            </div>
+
+                            <div class="small text-muted">
+                                {{ reading.equipment.asset_number }}
+                            </div>
+
+                        </td>
+
+                        <td>
+                            {{ reading.site.name|default:"—" }}
+                        </td>
+
+                        <td>
+                            {{ reading.reading_date|date:"d/m/Y" }}
+                        </td>
+
+                        <td>
+                            {{ reading.previous_reading|floatformat:1 }}
+                        </td>
+
+                        <td class="fw-bold">
+                            {{ reading.current_reading|floatformat:1 }}
+                        </td>
+
+                        <td>
+                            {{ reading.hours_worked|floatformat:1 }}
+                        </td>
+
+                        <td>
+
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis">
+                                {{ reading.get_reading_type_display }}
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            {% if reading.is_verified %}
+
+                                <span class="badge bg-success-subtle text-success">
+                                    Verified
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-warning-subtle text-warning">
+                                    Pending
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div class="dropdown">
+
+                                <button
+                                    class="btn btn-sm btn-light border"
+                                    data-bs-toggle="dropdown"
+                                >
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-end">
+
+                                    <li>
+                                        <a
+                                            class="dropdown-item"
+                                            href="{% url 'hourmeter:reading_detail' reading.pk %}"
+                                        >
+                                            <i class="bi bi-eye me-2"></i>
+                                            View
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a
+                                            class="dropdown-item"
+                                            href="{% url 'hourmeter:reading_update' reading.pk %}"
+                                        >
+                                            <i class="bi bi-pencil me-2"></i>
+                                            Edit
+                                        </a>
+                                    </li>
+
+                                </ul>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="10" class="text-center py-5">
+
+                            <i class="bi bi-speedometer2 fs-1 text-muted"></i>
+
+                            <div class="fw-semibold mt-3">
+                                No readings found
+                            </div>
+
+                            <div class="small text-muted">
+                                Add your first hour-meter reading.
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- Pagination -->
+
+
+    </div>
+
+</div>
+
+{% endblock %}

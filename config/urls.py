@@ -38,6 +38,11 @@ urlpatterns = [
 
     # Dashboard
     path("", include("dashboard.urls")),
+
+    path(
+        "hourmeter/",
+        include("hourmeter.urls"),
+    ),
 ]
 
 

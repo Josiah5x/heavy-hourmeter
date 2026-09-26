@@ -1,10 +1,15 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import EquipmentForm
 from .models import Equipment
+
+from .forms import ServiceRecordForm
+from .models import Equipment, ServiceRecord
+
 
 
 @login_required
@@ -289,3 +294,327 @@ def equipment_delete(request, pk):
         "equipment/equipment_confirm_delete.html",
         context
     )
+
+
+
+
+
+
+
+@login_required
+def service_list(request):
+
+    services = (
+        ServiceRecord.objects
+        .select_related(
+            "equipment",
+            "equipment__company",
+            "equipment__site",
+            "created_by",
+        )
+        .all()
+    )
+
+    query = request.GET.get("q", "").strip()
+    site = request.GET.get("site", "").strip()
+    status = request.GET.get("status", "").strip()
+    service_type = request.GET.get("service_type", "").strip()
+
+    # -------------------------------------------------
+    # SEARCH
+    # -------------------------------------------------
+
+    if query:
+        services = services.filter(
+            Q(equipment__asset_number__icontains=query)
+            | Q(equipment__name__icontains=query)
+            | Q(equipment__manufacturer__icontains=query)
+            | Q(equipment__model__icontains=query)
+        )
+
+    # -------------------------------------------------
+    # SITE
+    # -------------------------------------------------
+
+    if site:
+        services = services.filter(
+            equipment__site_id=site
+        )
+
+    # -------------------------------------------------
+    # SERVICE TYPE
+    # -------------------------------------------------
+
+    if service_type:
+        services = services.filter(
+            service_type=service_type
+        )
+
+    # -------------------------------------------------
+    # STATUS
+    # -------------------------------------------------
+
+    # service_status is a Python property, so it cannot
+    # be filtered directly with QuerySet.filter().
+    if status:
+        matching_ids = []
+
+        for service in services:
+            if service.service_status == status:
+                matching_ids.append(service.pk)
+
+        services = services.filter(
+            pk__in=matching_ids
+        )
+
+    # -------------------------------------------------
+    # TOTAL STATISTICS
+    # -------------------------------------------------
+
+    all_filtered_services = list(services)
+
+    total = len(all_filtered_services)
+
+    overdue = sum(
+        1
+        for service in all_filtered_services
+        if service.service_status == "overdue"
+    )
+
+    due = sum(
+        1
+        for service in all_filtered_services
+        if service.service_status == "due"
+    )
+
+    due_soon = sum(
+        1
+        for service in all_filtered_services
+        if service.service_status == "due_soon"
+    )
+
+    not_due = sum(
+        1
+        for service in all_filtered_services
+        if service.service_status == "not_due"
+    )
+
+    # -------------------------------------------------
+    # PAGINATION
+    # -------------------------------------------------
+
+    paginator = Paginator(
+        services,
+        15,  # records per page
+    )
+
+    page_number = request.GET.get(
+        "page"
+    )
+
+    page_obj = paginator.get_page(
+        page_number
+    )
+
+    # -------------------------------------------------
+    # SITES
+    # -------------------------------------------------
+
+    from companies.models import Site
+
+    sites = (
+        Site.objects
+        .filter(is_active=True)
+        .order_by("name")
+    )
+
+    context = {
+        # IMPORTANT:
+        # The template now loops through page_obj
+        "services": page_obj,
+
+        # Pagination object
+        "page_obj": page_obj,
+        "paginator": paginator,
+
+        "sites": sites,
+
+        "total": total,
+        "overdue": overdue,
+        "due": due,
+        "due_soon": due_soon,
+        "not_due": not_due,
+
+        "query": query,
+        "selected_site": site,
+        "selected_status": status,
+        "selected_service_type": service_type,
+
+        "service_types": (
+            ServiceRecord.ServiceType.choices
+        ),
+    }
+
+    return render(
+        request,
+        "equipment/service_list.html",
+        context,
+    )
+
+@login_required
+def service_create(request):
+
+    if request.method == "POST":
+
+        form = ServiceRecordForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            service = form.save(
+                commit=False
+            )
+
+            service.created_by = request.user
+
+            service.save()
+
+            messages.success(
+                request,
+                (
+                    "Service record created successfully."
+                ),
+            )
+
+            return redirect(
+                "equipment:service_detail",
+                pk=service.pk,
+            )
+
+    else:
+
+        equipment_id = request.GET.get(
+            "equipment"
+        )
+
+        initial = {}
+
+        if equipment_id:
+
+            initial["equipment"] = equipment_id
+
+        form = ServiceRecordForm(
+            initial=initial
+        )
+
+    return render(
+        request,
+        "equipment/service_form.html",
+        {
+            "form": form,
+            "service": None,
+        },
+    )
+
+
+@login_required
+def service_detail(request, pk):
+
+    service = get_object_or_404(
+        ServiceRecord.objects.select_related(
+            "equipment",
+            "equipment__company",
+            "equipment__site",
+            "created_by",
+        ),
+        pk=pk,
+    )
+
+    return render(
+        request,
+        "equipment/service_detail.html",
+        {
+            "service": service,
+        },
+    )
+
+
+@login_required
+def service_update(request, pk):
+
+    service = get_object_or_404(
+        ServiceRecord,
+        pk=pk,
+    )
+
+    if request.method == "POST":
+
+        form = ServiceRecordForm(
+            request.POST,
+            instance=service,
+        )
+
+        if form.is_valid():
+
+            service = form.save(
+                commit=False
+            )
+
+            service.save()
+
+            messages.success(
+                request,
+                "Service record updated successfully.",
+            )
+
+            return redirect(
+                "equipment:service_detail",
+                pk=service.pk,
+            )
+
+    else:
+
+        form = ServiceRecordForm(
+            instance=service
+        )
+
+    return render(
+        request,
+        "equipment/service_form.html",
+        {
+            "form": form,
+            "service": service,
+        },
+    )
+
+
+@login_required
+def service_delete(request, pk):
+
+    service = get_object_or_404(
+        ServiceRecord,
+        pk=pk,
+    )
+
+    if request.method == "POST":
+
+        service.delete()
+
+        messages.success(
+            request,
+            "Service record deleted successfully.",
+        )
+
+        return redirect(
+            "equipment:service_list"
+        )
+
+    return render(
+        request,
+        "equipment/service_confirm_delete.html",
+        {
+            "service": service,
+        },
+    )
+

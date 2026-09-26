@@ -405,5 +405,175 @@ class EquipmentForm(forms.ModelForm):
                     "earlier than the purchase date."
                 )
 
+        return cleaned_data
+
+
+
+from django import forms
+from django.utils import timezone
+
+from .models import Equipment, ServiceRecord
+
+
+class ServiceRecordForm(forms.ModelForm):
+
+    class Meta:
+        model = ServiceRecord
+
+        fields = [
+            "equipment",
+            "service_date",
+            "service_type",
+            "hour_meter_at_service",
+            "service_interval",
+            "air_filter_status",
+            "notes",
+        ]
+
+        widgets = {
+            "equipment": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+
+            "service_date": forms.DateInput(
+                attrs={
+                    "class": "form-control",
+                    "type": "date",
+                }
+            ),
+
+            "service_type": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+
+            "hour_meter_at_service": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "step": "0.1",
+                    "min": "0",
+                    "placeholder": "e.g. 9809",
+                }
+            ),
+
+            "service_interval": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "step": "0.1",
+                    "min": "1",
+                    "placeholder": "e.g. 250",
+                }
+            ),
+
+            "air_filter_status": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+
+            "notes": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 4,
+                    "placeholder": "Service remarks...",
+                }
+            ),
+        }
+
+        labels = {
+            "equipment": "Machine",
+            "service_date": "Service Date",
+            "service_type": "Service Type",
+            "hour_meter_at_service": "HM/KM at Service",
+            "service_interval": "Service Interval",
+            "air_filter_status": "Air Filter",
+            "notes": "Remarks",
+        }
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["equipment"].queryset = (
+            Equipment.objects
+            .select_related(
+                "company",
+                "site",
+            )
+            .order_by("asset_number")
+        )
+
+        self.fields["service_date"].initial = (
+            timezone.localdate()
+        )
+
+        self.fields["service_interval"].initial = 250
+
+    def clean_hour_meter_at_service(self):
+
+        value = self.cleaned_data.get(
+            "hour_meter_at_service"
+        )
+
+        if value is None:
+            raise forms.ValidationError(
+                "Enter the hour-meter reading at service."
+            )
+
+        if value < 0:
+            raise forms.ValidationError(
+                "Hour-meter reading cannot be negative."
+            )
+
+        return value
+
+    def clean_service_interval(self):
+
+        value = self.cleaned_data.get(
+            "service_interval"
+        )
+
+        if value is None or value <= 0:
+            raise forms.ValidationError(
+                "Service interval must be greater than zero."
+            )
+
+        return value
+
+    def clean(self):
+
+        cleaned_data = super().clean()
+
+        equipment = cleaned_data.get("equipment")
+        service_hm = cleaned_data.get(
+            "hour_meter_at_service"
+        )
+
+        if equipment and service_hm is not None:
+
+            current_hm = (
+                equipment.current_hours or 0
+            )
+
+            # Only warn through validation when creating
+            # an obviously inconsistent record.
+            if (
+                not self.instance.pk
+                and service_hm > current_hm
+            ):
+                self.add_error(
+                    "hour_meter_at_service",
+                    (
+                        f"The service reading ({service_hm}) "
+                        f"is higher than the machine's current "
+                        f"reading ({current_hm})."
+                    ),
+                )
 
         return cleaned_data
+
+
+

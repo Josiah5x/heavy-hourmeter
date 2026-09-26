@@ -1,0 +1,821 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Edit Service Record | HeavyMeter
+    {% else %}
+        New Service Record | HeavyMeter
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <a
+                href="{% url 'equipment:service_list' %}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-arrow-left"></i>
+            </a>
+
+            <div>
+
+                <h4 class="fw-bold mb-1">
+
+                    {% if form.instance.pk %}
+                        Edit Service Record
+                    {% else %}
+                        New Service Record
+                    {% endif %}
+
+                </h4>
+
+                <div class="text-muted small">
+                    Record equipment servicing and maintenance intervals.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <form
+        method="post"
+        novalidate
+    >
+
+        {% csrf_token %}
+
+
+        <!-- Non-field errors -->
+
+        {% if form.non_field_errors %}
+
+            <div class="alert alert-danger border-0 shadow-sm">
+
+                <div class="fw-semibold mb-1">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Please correct the following:
+                </div>
+
+                {{ form.non_field_errors }}
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="row g-4">
+
+
+            <!-- LEFT COLUMN -->
+
+            <div class="col-xl-8">
+
+
+                <!-- Equipment Information -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-transparent py-3">
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <div
+                                class="rounded-2 bg-primary-subtle text-primary p-2"
+                            >
+                                <i class="bi bi-truck"></i>
+                            </div>
+
+                            <div>
+
+                                <h6 class="fw-bold mb-0">
+                                    Equipment Information
+                                </h6>
+
+                                <small class="text-muted">
+                                    Select the machine being serviced.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div class="row g-3">
+
+                            <!-- Equipment -->
+
+                            <div class="col-md-7">
+
+                                <label
+                                    for="{{ form.equipment.id_for_label }}"
+                                    class="form-label fw-semibold"
+                                >
+                                    Equipment
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                {{ form.equipment }}
+
+                                {% for error in form.equipment.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Service Type -->
+
+                            <div class="col-md-5">
+
+                                <label
+                                    for="{{ form.service_type.id_for_label }}"
+                                    class="form-label fw-semibold"
+                                >
+                                    Service Type
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                {{ form.service_type }}
+
+                                {% for error in form.service_type.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Service Date -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ form.service_date.id_for_label }}"
+                                    class="form-label fw-semibold"
+                                >
+                                    Service Date
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                {{ form.service_date }}
+
+                                {% for error in form.service_date.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- HM at Service -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ form.hour_meter_at_service.id_for_label }}"
+                                    class="form-label fw-semibold"
+                                >
+                                    HM / KM at Service
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="input-group">
+
+                                    {{ form.hour_meter_at_service }}
+
+                                    <span class="input-group-text">
+                                        HM
+                                    </span>
+
+                                </div>
+
+                                {% for error in form.hour_meter_at_service.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Service Interval -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-transparent py-3">
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <div
+                                class="rounded-2 bg-success-subtle text-success p-2"
+                            >
+                                <i class="bi bi-calendar2-check"></i>
+                            </div>
+
+                            <div>
+
+                                <h6 class="fw-bold mb-0">
+                                    Service Interval
+                                </h6>
+
+                                <small class="text-muted">
+                                    Define when the next service is required.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div class="row g-3">
+
+                            <!-- Service Interval -->
+
+                            {% if form.service_interval %}
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ form.service_interval.id_for_label }}"
+                                    class="form-label fw-semibold"
+                                >
+                                    Service Interval
+                                </label>
+
+                                {{ form.service_interval }}
+
+                                {% if form.service_interval.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.service_interval.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in form.service_interval.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                            {% endif %}
+
+
+                            <!-- Next Service -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ form.next_service.id_for_label }}"
+                                    class="form-label fw-semibold"
+                                >
+                                    Next Service HM / KM
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                {{ form.next_service }}
+
+                                {% if form.next_service.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.next_service.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+                                {% for error in form.next_service.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Current HM -->
+
+                            {% if form.current_hm %}
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ form.current_hm.id_for_label }}"
+                                    class="form-label fw-semibold"
+                                >
+                                    Current HM / KM
+                                </label>
+
+                                {{ form.current_hm }}
+
+                                <div class="form-text">
+                                    Current equipment meter reading.
+                                </div>
+
+                                {% for error in form.current_hm.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                            {% endif %}
+
+
+                            <!-- Remaining -->
+
+                            {% if form.remaining_hours %}
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="{{ form.remaining_hours.id_for_label }}"
+                                    class="form-label fw-semibold"
+                                >
+                                    Remaining HM / KM
+                                </label>
+
+                                {{ form.remaining_hours }}
+
+                                <div class="form-text">
+                                    Remaining distance/hours before service.
+                                </div>
+
+                                {% for error in form.remaining_hours.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Remarks -->
+
+                {% if form.remarks %}
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-transparent py-3">
+
+                        <h6 class="fw-bold mb-0">
+                            Service Remarks
+                        </h6>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <label
+                            for="{{ form.remarks.id_for_label }}"
+                            class="form-label fw-semibold"
+                        >
+                            Remarks
+                        </label>
+
+                        {{ form.remarks }}
+
+                        {% for error in form.remarks.errors %}
+
+                            <div class="text-danger small mt-1">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- RIGHT COLUMN -->
+
+            <div class="col-xl-4">
+
+
+                <!-- Service Preview -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-transparent py-3">
+
+                        <h6 class="fw-bold mb-0">
+                            Service Preview
+                        </h6>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="text-center py-3">
+
+                            <div
+                                id="serviceStatusIcon"
+                                class="mb-3"
+                            >
+                                <i class="bi bi-tools fs-1 text-primary"></i>
+                            </div>
+
+                            <div
+                                id="serviceStatus"
+                                class="badge bg-secondary"
+                            >
+                                NOT CALCULATED
+                            </div>
+
+                        </div>
+
+
+                        <hr>
+
+
+                        <div class="d-flex justify-content-between mb-3">
+
+                            <span class="text-muted">
+                                HM at Service
+                            </span>
+
+                            <strong id="previewServiceHM">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="d-flex justify-content-between mb-3">
+
+                            <span class="text-muted">
+                                Next Service
+                            </span>
+
+                            <strong id="previewNextService">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="d-flex justify-content-between">
+
+                            <span class="text-muted">
+                                Remaining
+                            </span>
+
+                            <strong id="previewRemaining">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Information -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-body">
+
+                        <h6 class="fw-bold mb-3">
+
+                            <i class="bi bi-info-circle text-primary me-1"></i>
+                            Service Rules
+
+                        </h6>
+
+                        <ul class="small text-muted mb-0 ps-3">
+
+                            <li class="mb-2">
+                                HM/KM at service should match the equipment meter.
+                            </li>
+
+                            <li class="mb-2">
+                                Next service should be greater than the current meter.
+                            </li>
+
+                            <li class="mb-2">
+                                Remaining HM/KM is calculated from the current meter.
+                            </li>
+
+                            <li>
+                                Keep service records updated after every maintenance.
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100 mb-2"
+                        >
+                            <i class="bi bi-check-lg me-1"></i>
+
+                            {% if form.instance.pk %}
+                                Update Service Record
+                            {% else %}
+                                Save Service Record
+                            {% endif %}
+
+                        </button>
+
+                        <a
+                            href="{% url 'equipment:service_list' %}"
+                            class="btn btn-outline-secondary w-100"
+                        >
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const serviceHM =
+        document.getElementById(
+            "id_hour_meter_at_service"
+        );
+
+    const nextService =
+        document.getElementById(
+            "id_next_service"
+        );
+
+    const currentHM =
+        document.getElementById(
+            "id_current_hm"
+        );
+
+    const previewServiceHM =
+        document.getElementById(
+            "previewServiceHM"
+        );
+
+    const previewNextService =
+        document.getElementById(
+            "previewNextService"
+        );
+
+    const previewRemaining =
+        document.getElementById(
+            "previewRemaining"
+        );
+
+    const serviceStatus =
+        document.getElementById(
+            "serviceStatus"
+        );
+
+    const serviceStatusIcon =
+        document.getElementById(
+            "serviceStatusIcon"
+        );
+
+
+    function numberValue(element) {
+
+        if (!element) {
+            return null;
+        }
+
+        const value =
+            parseFloat(element.value);
+
+        return Number.isFinite(value)
+            ? value
+            : null;
+    }
+
+
+    function calculateService() {
+
+        const service =
+            numberValue(serviceHM);
+
+        const next =
+            numberValue(nextService);
+
+        const current =
+            numberValue(currentHM);
+
+
+        if (service !== null) {
+
+            previewServiceHM.textContent =
+                service.toLocaleString(
+                    undefined,
+                    {
+                        minimumFractionDigits: 1,
+                        maximumFractionDigits: 1
+                    }
+                );
+
+        } else {
+
+            previewServiceHM.textContent = "—";
+
+        }
+
+
+        if (next !== null) {
+
+            previewNextService.textContent =
+                next.toLocaleString(
+                    undefined,
+                    {
+                        minimumFractionDigits: 1,
+                        maximumFractionDigits: 1
+                    }
+                );
+
+        } else {
+
+            previewNextService.textContent = "—";
+
+        }
+
+
+        if (
+            current !== null &&
+            next !== null
+        ) {
+
+            const remaining =
+                next - current;
+
+
+            previewRemaining.textContent =
+                remaining.toLocaleString(
+                    undefined,
+                    {
+                        minimumFractionDigits: 1,
+                        maximumFractionDigits: 1
+                    }
+                );
+
+
+            if (remaining <= 0) {
+
+                serviceStatus.textContent =
+                    "SERVICE DUE";
+
+                serviceStatus.className =
+                    "badge bg-danger";
+
+                serviceStatusIcon.innerHTML =
+                    '<i class="bi bi-exclamation-octagon-fill fs-1 text-danger"></i>';
+
+            }
+
+            else if (remaining <= 50) {
+
+                serviceStatus.textContent =
+                    "DUE SOON";
+
+                serviceStatus.className =
+                    "badge bg-warning text-dark";
+
+                serviceStatusIcon.innerHTML =
+                    '<i class="bi bi-exclamation-circle-fill fs-1 text-warning"></i>';
+
+            }
+
+            else {
+
+                serviceStatus.textContent =
+                    "NOT DUE";
+
+                serviceStatus.className =
+                    "badge bg-success";
+
+                serviceStatusIcon.innerHTML =
+                    '<i class="bi bi-check-circle-fill fs-1 text-success"></i>';
+
+            }
+
+        }
+
+        else {
+
+            previewRemaining.textContent =
+                "—";
+
+            serviceStatus.textContent =
+                "NOT CALCULATED";
+
+            serviceStatus.className =
+                "badge bg-secondary";
+
+            serviceStatusIcon.innerHTML =
+                '<i class="bi bi-tools fs-1 text-primary"></i>';
+
+        }
+
+    }
+
+
+    serviceHM?.addEventListener(
+        "input",
+        calculateService
+    );
+
+    nextService?.addEventListener(
+        "input",
+        calculateService
+    );
+
+    currentHM?.addEventListener(
+        "input",
+        calculateService
+    );
+
+
+    calculateService();
+
+});
+
+</script>
+
+{% endblock %}

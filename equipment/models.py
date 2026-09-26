@@ -137,3 +137,256 @@ class Equipment(models.Model):
 
     def __str__(self):
         return f"{self.asset_number} - {self.name}"
+
+
+
+
+
+
+class ServiceRecord(models.Model):
+
+    class ServiceType(models.TextChoices):
+        A = "A", "A Service"
+        A2 = "A2", "A2 Service"
+        B = "B", "B Service"
+        C = "C", "C Service"
+        D = "D", "D Service"
+        OTHER = "OTHER", "Other"
+
+    class ServiceStatus(models.TextChoices):
+        NOT_DUE = "not_due", "Not Due"
+        DUE_SOON = "due_soon", "Due Soon"
+        DUE = "due", "Due"
+        OVERDUE = "overdue", "Overdue"
+
+    class AirFilterStatus(models.TextChoices):
+        NOT_DUE = "not_due", "Not Due"
+        SERVICE = "service", "Service"
+
+    equipment = models.ForeignKey(
+        Equipment,
+        on_delete=models.CASCADE,
+        related_name="service_records"
+    )
+
+    service_date = models.DateField()
+
+    service_type = models.CharField(
+        max_length=20,
+        choices=ServiceType.choices
+    )
+
+    hour_meter_at_service = models.DecimalField(
+        max_digits=12,
+        decimal_places=1,
+        default=0
+    )
+
+    service_interval = models.DecimalField(
+        max_digits=12,
+        decimal_places=1,
+        default=250
+    )
+
+    next_service = models.DecimalField(
+        max_digits=12,
+        decimal_places=1,
+        editable=False
+    )
+
+    air_filter_status = models.CharField(
+        max_length=20,
+        choices=AirFilterStatus.choices,
+        default=AirFilterStatus.NOT_DUE
+    )
+
+    notes = models.TextField(
+        blank=True
+    )
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_service_records"
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        ordering = ["-service_date", "-id"]
+
+    def save(self, *args, **kwargs):
+
+        self.next_service = (
+            self.hour_meter_at_service
+            + self.service_interval
+        )
+
+        super().save(*args, **kwargs)
+
+    @property
+    def current_hm(self):
+        return self.equipment.current_hours
+
+    @property
+    def remaining_hours(self):
+
+        remaining = (
+            self.next_service
+            - self.current_hm
+        )
+
+        return max(
+            remaining,
+            0
+        )
+
+    @property
+    def service_status(self):
+
+        remaining = (
+            self.next_service
+            - self.current_hm
+        )
+
+        if remaining <= 0:
+            return self.ServiceStatus.OVERDUE
+
+        if remaining <= 50:
+            return self.ServiceStatus.DUE
+
+        if remaining <= 100:
+            return self.ServiceStatus.DUE_SOON
+
+        return self.ServiceStatus.NOT_DUE
+
+
+    @property
+    def current_hm(self):
+        """
+        Current hour-meter reading from the latest
+        HourMeterReading for this equipment.
+        """
+
+        reading = (
+            self.equipment.hour_meter_readings
+            .order_by(
+                "-reading_date",
+                "-created_at",
+            )
+            .first()
+        )
+
+        if reading:
+            return reading.current_reading
+
+        return self.equipment.current_hours or Decimal("0.0")
+
+
+    @property
+    def remaining_hours(self):
+        """
+        Hours remaining before the next service.
+        """
+
+        return (
+            self.next_service
+            - self.current_hm
+        )
+
+
+    @property
+    def service_status(self):
+
+        remaining = self.remaining_hours
+
+        if remaining <= 0:
+            return "overdue"
+
+        if remaining <= 50:
+            return "due"
+
+        if remaining <= 100:
+            return "due_soon"
+
+        return "not_due"
+
+    @property
+    def latest_hour_meter_reading(self):
+        return (
+            self.hour_meter_readings
+            .order_by(
+                "-reading_date",
+                "-created_at",
+            )
+            .first()
+        )
+
+
+    @property
+    def current_hour_meter(self):
+        reading = self.latest_hour_meter_reading
+
+        if reading:
+            return reading.current_reading
+
+        return self.current_hours or Decimal("0.0")
+
+
+    @property
+    def register_row(self):
+
+        return {
+            "machine": self.equipment.name,
+
+            "location": (
+                self.equipment.site.name
+                if self.equipment.site
+                else ""
+            ),
+
+            "fleet_number": (
+                self.equipment.asset_number
+            ),
+
+            "service_type": (
+                self.get_service_type_display()
+            ),
+
+            "date": self.service_date,
+
+            "hm_at_service": (
+                self.hour_meter_at_service
+            ),
+
+            "next_service": (
+                self.next_service
+            ),
+
+            "current_hm": (
+                self.current_hm
+            ),
+
+            "remaining": (
+                self.remaining_hours
+            ),
+
+            "service_status": (
+                self.service_status
+            ),
+
+            "air_filter": (
+                self.get_air_filter_status_display()
+            ),
+        }
+
+
+

@@ -1,0 +1,1263 @@
+{% extends "base.html" %}
+
+{% block title %}Service Monitoring | HeavyMeter{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <a
+                    href="{% url 'equipment:list' %}"
+                    class="text-muted text-decoration-none"
+                >
+                    <i class="bi bi-truck me-1"></i>
+                    Equipment
+                </a>
+
+                <i class="bi bi-chevron-right small text-muted"></i>
+
+                <span class="text-muted">
+                    Service Monitoring
+                </span>
+            </div>
+
+            <h1 class="h3 fw-bold mb-1">
+                Service Monitoring
+            </h1>
+
+            <p class="text-muted mb-0">
+                Monitor hour-meter service intervals and maintenance status.
+            </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+
+            <a
+                href="{% url 'equipment:list' %}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-truck me-1"></i>
+                Equipment
+            </a>
+
+            <a
+                href="{% url 'equipment:service_create' %}"
+                class="btn btn-warning"
+            >
+                <i class="bi bi-plus-lg me-1"></i>
+                Add Service
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         STATISTICS
+    ========================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Total -->
+
+        <div class="col-6 col-xl-3">
+
+            <div class="hm-card p-3 h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+                        <div class="text-muted small mb-1">
+                            Total Records
+                        </div>
+
+                        <div class="fs-3 fw-bold">
+                            {{ total }}
+                        </div>
+
+                        <div class="small text-muted">
+                            Service records
+                        </div>
+                    </div>
+
+                    <div
+                        class="hm-stat-icon"
+                        style="
+                            background: rgba(245,158,11,.12);
+                            color: var(--primary);
+                        "
+                    >
+                        <i class="bi bi-wrench-adjustable"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Overdue -->
+
+        <div class="col-6 col-xl-3">
+
+            <div class="hm-card p-3 h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+                        <div class="text-muted small mb-1">
+                            Overdue
+                        </div>
+
+                        <div class="fs-3 fw-bold text-danger">
+                            {{ overdue }}
+                        </div>
+
+                        <div class="small text-muted">
+                            Requires attention
+                        </div>
+                    </div>
+
+                    <div
+                        class="hm-stat-icon"
+                        style="
+                            background: rgba(220,53,69,.12);
+                            color: #dc3545;
+                        "
+                    >
+                        <i class="bi bi-exclamation-octagon"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Due Soon -->
+
+        <div class="col-6 col-xl-3">
+
+            <div class="hm-card p-3 h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+                        <div class="text-muted small mb-1">
+                            Due Soon
+                        </div>
+
+                        <div class="fs-3 fw-bold text-warning">
+                            {{ due_soon }}
+                        </div>
+
+                        <div class="small text-muted">
+                            51–100 hours remaining
+                        </div>
+                    </div>
+
+                    <div
+                        class="hm-stat-icon"
+                        style="
+                            background: rgba(245,158,11,.12);
+                            color: #f59e0b;
+                        "
+                    >
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Not Due -->
+
+        <div class="col-6 col-xl-3">
+
+            <div class="hm-card p-3 h-100">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+                        <div class="text-muted small mb-1">
+                            Not Due
+                        </div>
+
+                        <div class="fs-3 fw-bold text-success">
+                            {{ not_due }}
+                        </div>
+
+                        <div class="small text-muted">
+                            More than 100 hours
+                        </div>
+                    </div>
+
+                    <div
+                        class="hm-stat-icon"
+                        style="
+                            background: rgba(25,135,84,.12);
+                            color: #198754;
+                        "
+                    >
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FILTERS
+    ========================================================== -->
+
+    <div class="hm-card mb-4">
+
+        <div class="p-3">
+
+            <form method="get">
+
+                <div class="row g-2 align-items-end">
+
+                    <!-- Search -->
+
+                    <div class="col-12 col-xl-4">
+
+                        <label class="form-label small fw-semibold">
+                            Search
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-search"></i>
+                            </span>
+
+                            <input
+                                type="search"
+                                name="q"
+                                value="{{ query }}"
+                                class="form-control"
+                                placeholder="Fleet number, machine..."
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Site -->
+
+                    <div class="col-12 col-md-4 col-xl-2">
+
+                        <label class="form-label small fw-semibold">
+                            Location
+                        </label>
+
+                        <select
+                            name="site"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All Locations
+                            </option>
+
+                            {% for item in sites %}
+
+                                <option
+                                    value="{{ item.pk }}"
+                                    {% if selected_site == item.pk|stringformat:"s" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ item.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Status -->
+
+                    <div class="col-12 col-md-4 col-xl-2">
+
+                        <label class="form-label small fw-semibold">
+                            Service Status
+                        </label>
+
+                        <select
+                            name="status"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All Status
+                            </option>
+
+                            <option
+                                value="overdue"
+                                {% if selected_status == "overdue" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Overdue
+                            </option>
+
+                            <option
+                                value="due"
+                                {% if selected_status == "due" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Due
+                            </option>
+
+                            <option
+                                value="due_soon"
+                                {% if selected_status == "due_soon" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Due Soon
+                            </option>
+
+                            <option
+                                value="not_due"
+                                {% if selected_status == "not_due" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Not Due
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Service Type -->
+
+                    <div class="col-12 col-md-4 col-xl-2">
+
+                        <label class="form-label small fw-semibold">
+                            Service Type
+                        </label>
+
+                        <select
+                            name="service_type"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                All Types
+                            </option>
+
+                            {% for value, label in service_types %}
+
+                                <option
+                                    value="{{ value }}"
+                                    {% if selected_service_type == value %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Buttons -->
+
+                    <div class="col-12 col-xl-2">
+
+                        <div class="d-flex gap-2">
+
+                            <button
+                                type="submit"
+                                class="btn btn-warning flex-grow-1"
+                            >
+                                <i class="bi bi-funnel me-1"></i>
+                                Filter
+                            </button>
+
+                            <a
+                                href="{% url 'equipment:service_list' %}"
+                                class="btn btn-outline-secondary"
+                                title="Clear filters"
+                            >
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SERVICE TABLE
+    ========================================================== -->
+
+    <div class="hm-card">
+
+        <!-- Table header -->
+
+        <div
+            class="p-3 border-bottom"
+            style="border-color: var(--border) !important;"
+        >
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Fleet Service Register
+                    </h5>
+
+                    <p class="small text-muted mb-0">
+                        Current service status based on hour-meter readings.
+                    </p>
+
+                </div>
+
+                <!-- <span class="badge rounded-pill text-bg-secondary">
+                    {{ services|length }} record{{ services|length|pluralize }}
+                </span> -->
+                <span class="badge rounded-pill text-bg-secondary">
+                {{ total }} record{{ total|pluralize }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        {% if services %}
+
+            <!-- =================================================
+                 RESPONSIVE TABLE
+            ================================================== -->
+
+            <div class="table-responsive">
+
+                <table
+                    class="table table-hover align-middle mb-0 service-table"
+                    style="min-width: 1450px;"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th class="ps-3 text-center">
+                                S/N
+                            </th>
+
+                            <th>
+                                MACHINE DESCRIPTION
+                            </th>
+
+                            <th>
+                                LOCATION
+                            </th>
+
+                            <th>
+                                FLEET NO.
+                            </th>
+
+                            <th>
+                                SER. TYPE
+                            </th>
+
+                            <th>
+                                DATE
+                            </th>
+
+                            <th class="text-end">
+                                HM/KM AT SERV.
+                            </th>
+
+                            <th class="text-end">
+                                NEXT SERVICE
+                            </th>
+
+                            <th class="text-end">
+                                CURR. H/KM
+                            </th>
+
+                            <th class="text-end">
+                                REM.
+                            </th>
+
+                            <th>
+                                SERVICE OR NOT
+                            </th>
+
+                            <th>
+                                AIR FILTER
+                            </th>
+
+                            <th class="text-end">
+                                ACTION
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for service in services %}
+
+                            <tr>
+
+                                <!-- S/N -->
+
+                                <td class="ps-3 text-center text-muted">
+                                    {{ forloop.counter }}
+                                </td>
+
+
+                                <!-- MACHINE -->
+
+                                <td>
+
+                                    <div class="fw-semibold">
+                                        {{ service.equipment.name }}
+                                    </div>
+
+                                    {% if service.equipment.manufacturer %}
+
+                                        <div class="small text-muted">
+
+                                            {{ service.equipment.manufacturer }}
+
+                                            {% if service.equipment.model %}
+                                                {{ service.equipment.model }}
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- LOCATION -->
+
+                                <td>
+
+                                    {% if service.equipment.site %}
+
+                                        <div class="d-flex align-items-center gap-1">
+
+                                            <i class="bi bi-geo-alt text-warning"></i>
+
+                                            <span>
+                                                {{ service.equipment.site.name }}
+                                            </span>
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- FLEET -->
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'equipment:detail' service.equipment.pk %}"
+                                        class="fw-bold text-decoration-none"
+                                    >
+                                        {{ service.equipment.asset_number }}
+                                    </a>
+
+                                </td>
+
+
+                                <!-- TYPE -->
+
+                                <td>
+
+                                    <span class="badge rounded-pill text-bg-secondary">
+
+                                        {{ service.get_service_type_display }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- DATE -->
+
+                                <td class="text-nowrap">
+
+                                    {{ service.service_date|date:"d/m/Y" }}
+
+                                </td>
+
+
+                                <!-- HM AT SERVICE -->
+
+                                <td class="text-end fw-semibold">
+
+                                    {{ service.hour_meter_at_service|floatformat:1 }}
+
+                                </td>
+
+
+                                <!-- NEXT SERVICE -->
+
+                                <td class="text-end">
+
+                                    <span class="fw-bold">
+
+                                        {{ service.next_service|floatformat:1 }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- CURRENT HM -->
+
+                                <td class="text-end">
+
+                                    <span class="fw-bold">
+
+                                        {{ service.current_hm|floatformat:1 }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- REMAINING -->
+
+                                <td class="text-end">
+
+                                    {% if service.service_status == "overdue" %}
+
+                                        <span class="fw-bold text-danger">
+                                            {{ service.remaining_hours|floatformat:1 }}
+                                        </span>
+
+                                    {% elif service.service_status == "due" %}
+
+                                        <span class="fw-bold text-danger">
+                                            {{ service.remaining_hours|floatformat:1 }}
+                                        </span>
+
+                                    {% elif service.service_status == "due_soon" %}
+
+                                        <span class="fw-bold text-warning">
+                                            {{ service.remaining_hours|floatformat:1 }}
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="fw-bold text-success">
+                                            {{ service.remaining_hours|floatformat:1 }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- SERVICE STATUS -->
+
+                                <td>
+
+                                    {% if service.service_status == "overdue" %}
+
+                                        <span class="badge rounded-pill bg-danger">
+                                            <i class="bi bi-exclamation-octagon me-1"></i>
+                                            OVERDUE
+                                        </span>
+
+                                    {% elif service.service_status == "due" %}
+
+                                        <span class="badge rounded-pill bg-danger">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            DUE
+                                        </span>
+
+                                    {% elif service.service_status == "due_soon" %}
+
+                                        <span
+                                            class="badge rounded-pill"
+                                            style="
+                                                background: rgba(245,158,11,.15);
+                                                color: #f59e0b;
+                                            "
+                                        >
+                                            <i class="bi bi-clock me-1"></i>
+                                            DUE SOON
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge rounded-pill bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            NOT DUE
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- AIR FILTER -->
+
+                                <td>
+
+                                    {% if service.air_filter_status == "service" %}
+
+                                        <span class="badge rounded-pill bg-danger">
+                                            <i class="bi bi-filter-circle me-1"></i>
+                                            SERVICE
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge rounded-pill bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            NOT DUE
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- ACTION -->
+
+                                <td class="text-end">
+
+                                    <div class="dropdown">
+
+                                        <button
+                                            class="btn btn-sm btn-outline-secondary"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-menu-end">
+
+                                            <li>
+
+                                                <a
+                                                    class="dropdown-item"
+                                                    href="{% url 'equipment:service_detail' service.pk %}"
+                                                >
+                                                    <i class="bi bi-eye me-2"></i>
+                                                    View
+                                                </a>
+
+                                            </li>
+
+                                            <li>
+
+                                                <a
+                                                    class="dropdown-item"
+                                                    href="{% url 'equipment:service_update' service.pk %}"
+                                                >
+                                                    <i class="bi bi-pencil me-2"></i>
+                                                    Edit
+                                                </a>
+
+                                            </li>
+
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+
+                                            <li>
+
+                                                <a
+                                                    class="dropdown-item text-danger"
+                                                    href="{% url 'equipment:service_delete' service.pk %}"
+                                                >
+                                                    <i class="bi bi-trash me-2"></i>
+                                                    Delete
+                                                </a>
+
+                                            </li>
+
+                                        </ul>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- =================================================
+                 TABLE FOOTER
+            ================================================== -->
+
+            <div
+                class="px-3 py-3 border-top"
+                style="border-color: var(--border) !important;"
+            >
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+
+                    <div class="small text-muted">
+
+                        <i class="bi bi-info-circle me-1"></i>
+
+                        Remaining hours are calculated from the
+                        current equipment hour-meter reading.
+
+                    </div>
+
+                    <div class="small text-muted">
+
+                        <span class="text-danger fw-semibold">
+                            Red
+                        </span>
+                        = immediate attention
+
+                        <span class="mx-2">•</span>
+
+                        <span class="text-warning fw-semibold">
+                            Amber
+                        </span>
+                        = approaching service
+
+                        <span class="mx-2">•</span>
+
+                        <span class="text-success fw-semibold">
+                            Green
+                        </span>
+                        = not due
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+        <!-- =================================================
+     PAGINATION
+================================================== -->
+
+{% if page_obj.has_other_pages %}
+
+    <div
+        class="px-3 py-3 border-top"
+        style="border-color: var(--border) !important;"
+    >
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+            <!-- RECORD INFO -->
+
+            <div class="small text-muted">
+
+                Showing
+
+                <strong>
+                    {{ page_obj.start_index }}
+                </strong>
+
+                to
+
+                <strong>
+                    {{ page_obj.end_index }}
+                </strong>
+
+                of
+
+                <strong>
+                    {{ paginator.count }}
+                </strong>
+
+                records
+
+            </div>
+
+
+            <!-- PAGINATION -->
+
+            <nav aria-label="Service records pagination">
+
+                <ul class="pagination pagination-sm mb-0">
+
+                    <!-- FIRST -->
+
+                    {% if page_obj.has_previous %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_site %}site={{ selected_site }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}{% if selected_service_type %}service_type={{ selected_service_type }}&{% endif %}page=1"
+                                title="First page"
+                            >
+                                <i class="bi bi-chevron-double-left"></i>
+                            </a>
+
+                        </li>
+
+                    {% else %}
+
+                        <li class="page-item disabled">
+
+                            <span class="page-link">
+                                <i class="bi bi-chevron-double-left"></i>
+                            </span>
+
+                        </li>
+
+                    {% endif %}
+
+
+                    <!-- PREVIOUS -->
+
+                    {% if page_obj.has_previous %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_site %}site={{ selected_site }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}{% if selected_service_type %}service_type={{ selected_service_type }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                            >
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+
+                        </li>
+
+                    {% else %}
+
+                        <li class="page-item disabled">
+
+                            <span class="page-link">
+                                <i class="bi bi-chevron-left"></i>
+                            </span>
+
+                        </li>
+
+                    {% endif %}
+
+
+                    <!-- PAGE NUMBERS -->
+
+                    {% for num in paginator.page_range %}
+
+                        {% if num == page_obj.number %}
+
+                            <li class="page-item active">
+
+                                <span class="page-link">
+                                    {{ num }}
+                                </span>
+
+                            </li>
+
+                        {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+
+                            <li class="page-item">
+
+                                <a
+                                    class="page-link"
+                                    href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_site %}site={{ selected_site }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}{% if selected_service_type %}service_type={{ selected_service_type }}&{% endif %}page={{ num }}"
+                                >
+                                    {{ num }}
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    <!-- NEXT -->
+
+                    {% if page_obj.has_next %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_site %}site={{ selected_site }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}{% if selected_service_type %}service_type={{ selected_service_type }}&{% endif %}page={{ page_obj.next_page_number }}"
+                            >
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+                        </li>
+
+                    {% else %}
+
+                        <li class="page-item disabled">
+
+                            <span class="page-link">
+                                <i class="bi bi-chevron-right"></i>
+                            </span>
+
+                        </li>
+
+                    {% endif %}
+
+
+                    <!-- LAST -->
+
+                    {% if page_obj.has_next %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_site %}site={{ selected_site }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}{% if selected_service_type %}service_type={{ selected_service_type }}&{% endif %}page={{ paginator.num_pages }}"
+                                title="Last page"
+                            >
+                                <i class="bi bi-chevron-double-right"></i>
+                            </a>
+
+                        </li>
+
+                    {% else %}
+
+                        <li class="page-item disabled">
+
+                            <span class="page-link">
+                                <i class="bi bi-chevron-double-right"></i>
+                            </span>
+
+                        </li>
+
+                    {% endif %}
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="text-center py-5">
+
+                <div
+                    class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                    style="
+                        width: 76px;
+                        height: 76px;
+                        background: rgba(245,158,11,.10);
+                        color: var(--primary);
+                    "
+                >
+                    <i class="bi bi-wrench-adjustable fs-2"></i>
+                </div>
+
+                <h5 class="fw-bold">
+                    No service records found
+                </h5>
+
+                <p class="text-muted mb-4">
+                    {% if query or selected_site or selected_status or selected_service_type %}
+                        Try changing your filters or search criteria.
+                    {% else %}
+                        Start by adding the first service record.
+                    {% endif %}
+                </p>
+
+                <div class="d-flex justify-content-center gap-2">
+
+                    {% if query or selected_site or selected_status or selected_service_type %}
+
+                        <a
+                            href="{% url 'equipment:service_list' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            <i class="bi bi-x-lg me-1"></i>
+                            Clear Filters
+                        </a>
+
+                    {% endif %}
+
+                    <a
+                        href="{% url 'equipment:service_create' %}"
+                        class="btn btn-warning"
+                    >
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Add Service Record
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     PAGE STYLES
+============================================================= -->
+
+<style>
+
+    .hm-stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 1.15rem;
+    }
+
+
+    .service-table {
+        font-size: .875rem;
+    }
+
+
+    .service-table thead th {
+        white-space: nowrap;
+
+        font-size: .72rem;
+        font-weight: 700;
+
+        letter-spacing: .035em;
+
+        color: var(--bs-secondary-color);
+
+        background: var(--bs-tertiary-bg);
+
+        border-bottom: 1px solid var(--border);
+    }
+
+
+    .service-table tbody td {
+        border-color: var(--border);
+    }
+
+
+    .service-table tbody tr {
+        transition:
+            background-color .15s ease,
+            transform .15s ease;
+    }
+
+
+    .service-table tbody tr:hover {
+        background: var(--bs-tertiary-bg);
+    }
+
+
+    .service-table a {
+        color: inherit;
+    }
+
+
+    .service-table a:hover {
+        color: var(--primary);
+    }
+
+
+    .table-responsive {
+        scrollbar-width: thin;
+    }
+
+
+    .table-responsive::-webkit-scrollbar {
+        height: 8px;
+    }
+
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        border-radius: 20px;
+        background: rgba(128,128,128,.35);
+    }
+
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+
+    @media (max-width: 767.98px) {
+
+        .service-table {
+            font-size: .8rem;
+        }
+
+    }
+
+</style>
+
+{% endblock %}

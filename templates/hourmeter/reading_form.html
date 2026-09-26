@@ -1,0 +1,330 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Edit Hour Meter Reading
+    {% else %}
+        New Hour Meter Reading
+    {% endif %}
+    | HeavyMeter
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-xl-8 col-lg-10">
+
+            <div class="d-flex align-items-center gap-3 mb-4">
+
+                <a
+                    href="{% url 'hourmeter:reading_list' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+
+                <div>
+
+                    <h4 class="fw-bold mb-1">
+
+                        {% if form.instance.pk %}
+                            Edit Hour Meter Reading
+                        {% else %}
+                            New Hour Meter Reading
+                        {% endif %}
+
+                    </h4>
+
+                    <div class="small text-muted">
+                        Record the latest equipment meter reading.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="post"
+                enctype="multipart/form-data"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-transparent py-3">
+
+                        <h6 class="fw-bold mb-0">
+                            Reading Information
+                        </h6>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        {% if form.non_field_errors %}
+
+                            <div class="alert alert-danger">
+
+                                {{ form.non_field_errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="row g-4">
+
+
+                            <!-- Equipment -->
+
+                            <div class="col-md-6">
+
+                                <label class="form-label fw-semibold">
+                                    Equipment
+                                </label>
+
+                                {{ form.equipment }}
+
+                                {% for error in form.equipment.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Site -->
+
+                            <div class="col-md-6">
+
+                                <label class="form-label fw-semibold">
+                                    Operating Site
+                                </label>
+
+                                {{ form.site }}
+
+                                {% for error in form.site.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Date -->
+
+                            <div class="col-md-4">
+
+                                <label class="form-label fw-semibold">
+                                    Reading Date
+                                </label>
+
+                                {{ form.reading_date }}
+
+                                {% for error in form.reading_date.errors %}
+                                    <div class="text-danger small">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Reading Type -->
+
+                            <div class="col-md-4">
+
+                                <label class="form-label fw-semibold">
+                                    Reading Type
+                                </label>
+
+                                {{ form.reading_type }}
+
+                            </div>
+
+
+                            <!-- Operator -->
+
+                            <div class="col-md-4">
+
+                                <label class="form-label fw-semibold">
+                                    Operator
+                                </label>
+
+                                {{ form.operator_name }}
+
+                            </div>
+
+
+                            <!-- Previous -->
+
+                            <div class="col-md-6">
+
+                                <label class="form-label fw-semibold">
+                                    Previous HM/KM
+                                </label>
+
+                                {{ form.previous_reading }}
+
+                                <div class="form-text">
+                                    Automatically obtained from the latest reading.
+                                </div>
+
+                                {% for error in form.previous_reading.errors %}
+                                    <div class="text-danger small">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- Current -->
+
+                            <div class="col-md-6">
+
+                                <label class="form-label fw-semibold">
+                                    Current HM/KM
+                                </label>
+
+                                {{ form.current_reading }}
+
+                                {% for error in form.current_reading.errors %}
+                                    <div class="text-danger small">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                                <div
+                                    id="hoursPreview"
+                                    class="mt-2 small text-primary fw-semibold"
+                                ></div>
+
+                            </div>
+
+
+                            <!-- Remarks -->
+
+                            <div class="col-12">
+
+                                <label class="form-label fw-semibold">
+                                    Remarks
+                                </label>
+
+                                {{ form.remarks }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a
+                        href="{% url 'hourmeter:reading_list' %}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary px-4"
+                    >
+                        <i class="bi bi-check-lg me-1"></i>
+
+                        {% if form.instance.pk %}
+                            Update Reading
+                        {% else %}
+                            Save Reading
+                        {% endif %}
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const previous =
+        document.getElementById("id_previous_reading");
+
+    const current =
+        document.getElementById("id_current_reading");
+
+    const preview =
+        document.getElementById("hoursPreview");
+
+    function calculateHours() {
+
+        const previousValue =
+            parseFloat(previous?.value || 0);
+
+        const currentValue =
+            parseFloat(current?.value || 0);
+
+        if (
+            !isNaN(previousValue) &&
+            !isNaN(currentValue)
+        ) {
+
+            const worked =
+                currentValue - previousValue;
+
+            if (worked >= 0) {
+
+                preview.innerHTML =
+                    `<i class="bi bi-clock me-1"></i>
+                     Hours worked: ${worked.toFixed(1)}`;
+
+            } else {
+
+                preview.innerHTML =
+                    `<span class="text-danger">
+                        Current reading cannot be lower than previous reading.
+                     </span>`;
+
+            }
+
+        }
+
+    }
+
+    current?.addEventListener(
+        "input",
+        calculateHours
+    );
+
+    calculateHours();
+
+});
+
+</script>
+
+{% endblock %}
