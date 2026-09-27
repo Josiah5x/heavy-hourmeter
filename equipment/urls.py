@@ -25,7 +25,7 @@ urlpatterns = [
     path(
         "<int:pk>/",
         views.equipment_detail,
-        name="detail",
+        name="equipment_detail",
     ),
 
     # Edit

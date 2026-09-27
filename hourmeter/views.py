@@ -10,7 +10,7 @@ from django.utils import timezone
 from .forms import HourMeterReadingForm
 from .models import HourMeterReading
 
-from equipment.models import Equipment
+from equipment.models import Equipment, ServiceRecord, Site
 
 
 # ============================================================
