@@ -298,8 +298,21 @@ def equipment_delete(request, pk):
 
 
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render
+
+from companies.models import Site
+
+from .forms import ServiceRecordForm
+from .models import ServiceRecord
 
 
+# =========================================================
+# SERVICE LIST
+# =========================================================
 
 @login_required
 def service_list(request):
@@ -320,46 +333,53 @@ def service_list(request):
     status = request.GET.get("status", "").strip()
     service_type = request.GET.get("service_type", "").strip()
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
     # SEARCH
-    # -------------------------------------------------
+    # -----------------------------------------------------
 
     if query:
+
         services = services.filter(
             Q(equipment__asset_number__icontains=query)
             | Q(equipment__name__icontains=query)
             | Q(equipment__manufacturer__icontains=query)
             | Q(equipment__model__icontains=query)
+            | Q(equipment__serial_number__icontains=query)
         )
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
     # SITE
-    # -------------------------------------------------
+    # -----------------------------------------------------
 
     if site:
+
         services = services.filter(
             equipment__site_id=site
         )
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
     # SERVICE TYPE
-    # -------------------------------------------------
+    # -----------------------------------------------------
 
     if service_type:
+
         services = services.filter(
             service_type=service_type
         )
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
     # STATUS
-    # -------------------------------------------------
-
+    #
     # service_status is a Python property, so it cannot
-    # be filtered directly with QuerySet.filter().
+    # be filtered directly by QuerySet.filter().
+    # -----------------------------------------------------
+
     if status:
+
         matching_ids = []
 
         for service in services:
+
             if service.service_status == status:
                 matching_ids.append(service.pk)
 
@@ -367,9 +387,9 @@ def service_list(request):
             pk__in=matching_ids
         )
 
-    # -------------------------------------------------
-    # TOTAL STATISTICS
-    # -------------------------------------------------
+    # -----------------------------------------------------
+    # STATISTICS
+    # -----------------------------------------------------
 
     all_filtered_services = list(services)
 
@@ -399,28 +419,24 @@ def service_list(request):
         if service.service_status == "not_due"
     )
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
     # PAGINATION
-    # -------------------------------------------------
+    # -----------------------------------------------------
 
     paginator = Paginator(
         services,
-        15,  # records per page
+        15,
     )
 
-    page_number = request.GET.get(
-        "page"
-    )
+    page_number = request.GET.get("page")
 
     page_obj = paginator.get_page(
         page_number
     )
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
     # SITES
-    # -------------------------------------------------
-
-    from companies.models import Site
+    # -----------------------------------------------------
 
     sites = (
         Site.objects
@@ -428,12 +444,12 @@ def service_list(request):
         .order_by("name")
     )
 
-    context = {
-        # IMPORTANT:
-        # The template now loops through page_obj
-        "services": page_obj,
+    # -----------------------------------------------------
+    # CONTEXT
+    # -----------------------------------------------------
 
-        # Pagination object
+    context = {
+        "services": page_obj,
         "page_obj": page_obj,
         "paginator": paginator,
 
@@ -461,8 +477,15 @@ def service_list(request):
         context,
     )
 
+
+# =========================================================
+# CREATE SERVICE RECORD
+# =========================================================
+
 @login_required
 def service_create(request):
+
+    equipment_id = request.GET.get("equipment")
 
     if request.method == "POST":
 
@@ -483,7 +506,9 @@ def service_create(request):
             messages.success(
                 request,
                 (
-                    "Service record created successfully."
+                    f"Service record for "
+                    f"{service.equipment.asset_number} "
+                    "created successfully."
                 ),
             )
 
@@ -492,11 +517,11 @@ def service_create(request):
                 pk=service.pk,
             )
 
-    else:
+        # IMPORTANT:
+        # If validation fails, stay on the page
+        # and display form.errors.
 
-        equipment_id = request.GET.get(
-            "equipment"
-        )
+    else:
 
         initial = {}
 
@@ -514,9 +539,14 @@ def service_create(request):
         {
             "form": form,
             "service": None,
+            "page_title": "Add Service Record",
+            "submit_text": "Save Service Record",
         },
     )
 
+# =========================================================
+# SERVICE DETAIL
+# =========================================================
 
 @login_required
 def service_detail(request, pk):
@@ -540,6 +570,11 @@ def service_detail(request, pk):
     )
 
 
+# =========================================================
+# UPDATE SERVICE RECORD
+# =========================================================
+
+
 @login_required
 def service_update(request, pk):
 
@@ -561,11 +596,19 @@ def service_update(request, pk):
                 commit=False
             )
 
+            # Keep original creator
+            # unless you specifically want to
+            # change it during editing.
+
             service.save()
 
             messages.success(
                 request,
-                "Service record updated successfully.",
+                (
+                    f"Service record for "
+                    f"{service.equipment.asset_number} "
+                    "updated successfully."
+                ),
             )
 
             return redirect(
@@ -585,9 +628,15 @@ def service_update(request, pk):
         {
             "form": form,
             "service": service,
+            "page_title": "Edit Service Record",
+            "submit_text": "Update Service Record",
         },
     )
 
+
+# =========================================================
+# DELETE SERVICE RECORD
+# =========================================================
 
 @login_required
 def service_delete(request, pk):
