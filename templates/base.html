@@ -1,1359 +1,693 @@
+
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="light">
 
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
-        {% block title %}
-            HeavyMeter
-        {% endblock %}
+        {% block title %}HeavyDuty HM{% endblock %}
     </title>
 
-    <!-- Bootstrap -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
 
-    <!-- Bootstrap Icons -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
         rel="stylesheet"
     >
 
-    <!-- Google Font -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
-
     <style>
 
-        :root {
-            --sidebar-width: 260px;
-
-            --bg-main: #0b0f14;
-            --bg-sidebar: #0d131a;
-            --bg-card: #121820;
-            --bg-card-hover: #17202a;
-
-            --border: #26313d;
-
-            --text-main: #f1f5f9;
-            --text-muted: #8b98a7;
-
-            --primary: #f59e0b;
-            --primary-dark: #d97706;
-
-            --success: #22c55e;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --info: #38bdf8;
-        }
-
-        /* =========================
-   LIGHT THEME
-========================= */
-
-html[data-theme="light"] {
-
-    --bg-main: #f4f6f8;
-    --bg-sidebar: #ffffff;
-    --bg-card: #ffffff;
-    --bg-card-hover: #f8fafc;
-
-    --border: #e2e8f0;
-
-    --text-main: #17202a;
-    --text-muted: #64748b;
-
-    --input-bg: #ffffff;
-
-    --primary: #d97706;
-    --primary-dark: #b45309;
-}
-
-        * {
-            box-sizing: border-box;
-        }
+        /* =====================================================
+           GLOBAL
+        ===================================================== */
 
         body {
-    margin: 0;
-    font-family: "Inter", sans-serif;
-    background: var(--bg-main);
-    color: var(--text-main);
-
-    transition:
-        background-color .25s ease,
-        color .25s ease;
-}
-        /* =========================
-           SIDEBAR
-        ========================= */
+            min-height: 100vh;
+            background: var(--bs-body-bg);
+            color: var(--bs-body-color);
+        }
 
 
-.sidebar,
-.topbar,
-.stat-card,
-.panel,
-.icon-button,
-.form-control,
-.form-select {
-    transition:
-        background-color .25s ease,
-        border-color .25s ease,
-        color .25s ease;
-}
+        /* =====================================================
+           TOP NAVBAR
+        ===================================================== */
 
-
-/* =========================================
-   FORM CONTROLS
-========================================= */
-
-.form-control,
-.form-select,
-textarea.form-control {
-    background-color: var(--input-bg) !important;
-    color: var(--text-main) !important;
-    border: 1px solid var(--border) !important;
-}
-
-.form-control::placeholder {
-    color: var(--text-muted) !important;
-    opacity: 1;
-}
-
-.form-control:focus,
-.form-select:focus,
-textarea.form-control:focus {
-    background-color: var(--input-bg) !important;
-    color: var(--text-main) !important;
-
-    border-color: var(--primary) !important;
-
-    box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.12) !important;
-}
-
-
-/* =========================================
-   LIGHT MODE
-========================================= */
-
-html[data-theme="light"] {
-
-    --input-bg: #ffffff;
-    --text-main: #17202a;
-    --text-muted: #64748b;
-    --border: #d8dee6;
-}
-
-html[data-theme="light"] .form-control,
-html[data-theme="light"] .form-select,
-html[data-theme="light"] textarea.form-control {
-
-    background-color: #ffffff !important;
-    color: #17202a !important;
-    border-color: #d8dee6 !important;
-}
-
-html[data-theme="light"] .form-control::placeholder {
-
-    color: #94a3b8 !important;
-
-}
-
-
-/* =========================================
-   DARK MODE
-========================================= */
-
-html[data-theme="dark"] {
-
-    --input-bg: #0d131a;
-    --text-main: #f1f5f9;
-    --text-muted: #8b98a7;
-    --border: #26313d;
-}
-
-html[data-theme="dark"] .form-control,
-html[data-theme="dark"] .form-select,
-html[data-theme="dark"] textarea.form-control {
-
-    background-color: #0d131a !important;
-    color: #f1f5f9 !important;
-    border-color: #26313d !important;
-}
-
-.form-label {
-    color: var(--text-muted);
-
-    font-size: 13px;
-    font-weight: 600;
-}
-
-textarea.form-control {
-    resize: vertical;
-}
-
-
-
-
-        .sidebar {
-            position: fixed;
+        .hm-navbar {
+            min-height: 68px;
+            border-bottom: 1px solid var(--bs-border-color);
+            background: var(--bs-body-bg);
+            position: sticky;
             top: 0;
-            left: 0;
-
-            width: var(--sidebar-width);
-            height: 100vh;
-
-            background: var(--bg-sidebar);
-            border-right: 1px solid var(--border);
-
-            z-index: 1000;
-
-            display: flex;
-            flex-direction: column;
+            z-index: 1030;
         }
 
 
-        html[data-theme="light"] .sidebar-link {
-        color: #64748b;
-        }
-
-        html[data-theme="light"] .sidebar-link:hover {
-            background: #f1f5f9;
-            color: #17202a;
-        }
-
-        html[data-theme="light"] .sidebar-link.active {
-            background: rgba(217, 119, 6, .10);
-            color: var(--primary);
-        }
-
-        .brand {
-            height: 75px;
-
-            display: flex;
-            align-items: center;
-
-            padding: 0 24px;
-
-            border-bottom: 1px solid var(--border);
-        }
-
-        .brand-icon {
-            width: 40px;
-            height: 40px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: var(--primary);
-            color: #111;
-
-            border-radius: 10px;
-
-            font-size: 20px;
+        .hm-brand {
+            font-size: 1.2rem;
             font-weight: 800;
-
-            margin-right: 12px;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
         }
 
-        .brand-name {
-            font-size: 19px;
-            font-weight: 800;
-        }
 
-        .brand-subtitle {
-            font-size: 10px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Navigation */
-
-        .sidebar-nav {
-            padding: 20px 12px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .nav-section {
-            font-size: 10px;
-            font-weight: 700;
-
-            color: #667382;
-
-            text-transform: uppercase;
-
-            letter-spacing: 1.2px;
-
-            padding: 12px 12px 7px;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-
-            gap: 12px;
-
-            padding: 11px 13px;
-
-            margin-bottom: 4px;
-
-            border-radius: 8px;
-
-            color: #9ba7b5;
-
-            text-decoration: none;
-
-            font-size: 14px;
-            font-weight: 500;
-
-            transition: .2s;
-        }
-
-        .sidebar-link i {
-            font-size: 17px;
-            width: 20px;
-        }
-
-        .sidebar-link:hover {
-            color: white;
-            background: #151d26;
-        }
-
-        .sidebar-link.active {
-            background: rgba(245, 158, 11, .12);
-            color: var(--primary);
-        }
-
-        /* User */
-
-        .sidebar-user {
-            padding: 15px;
-            border-top: 1px solid var(--border);
-        }
-
-        .user-box {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-avatar {
+        .hm-brand-icon {
             width: 38px;
             height: 38px;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 50%;
-
-            background: #1f2937;
-            color: var(--primary);
-
-            font-weight: 700;
-        }
-
-        .user-name {
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .user-role {
-            font-size: 10px;
-            color: var(--text-muted);
-        }
-
-        /* =========================
-           MAIN
-        ========================= */
-
-        .main-wrapper {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-        }
-
-        /* Topbar */
-
-        .topbar {
-            height: 75px;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            padding: 0 28px;
-
-            background: color-mix(
-            in srgb,
-            var(--bg-main) 95%,
-            transparent
-            );
-
-            border-bottom: 1px solid var(--border);
-
-            position: sticky;
-            top: 0;
-
-            z-index: 900;
-        }
-
-        .page-title {
-            font-size: 17px;
-            font-weight: 700;
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-.icon-button {
-    width: 38px;
-    height: 38px;
-
-    border-radius: 8px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: var(--bg-card);
-
-    color: var(--text-muted);
-
-    border: 1px solid var(--border);
-
-    cursor: pointer;
-
-    transition: .2s;
-}
-
-.icon-button:hover {
-    color: var(--primary);
-    border-color: var(--primary);
-    transform: translateY(-1px);
-}
-
-
-        /* Content */
-
-        .content {
-            padding: 28px;
-        }
-
-        /* Cards */
-
-        .stat-card {
-            background: var(--bg-card);
-
-            border: 1px solid var(--border);
-
-            border-radius: 12px;
-
-            padding: 20px;
-
-            height: 100%;
-
-            transition: .2s;
-        }
-
-        .stat-card:hover {
-            background: var(--bg-card-hover);
-            transform: translateY(-2px);
-        }
-
-        .stat-icon {
-            width: 42px;
-            height: 42px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 9px;
-
-            font-size: 19px;
-
-            margin-bottom: 16px;
-        }
-
-        .icon-orange {
-            background: rgba(245, 158, 11, .12);
-            color: var(--primary);
-        }
-
-        .icon-green {
-            background: rgba(34, 197, 94, .12);
-            color: var(--success);
-        }
-
-        .icon-red {
-            background: rgba(239, 68, 68, .12);
-            color: var(--danger);
-        }
-
-        .icon-blue {
-            background: rgba(56, 189, 248, .12);
-            color: var(--info);
-        }
-
-        .stat-label {
-            color: var(--text-muted);
-            font-size: 12px;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            font-size: 27px;
-            font-weight: 800;
-        }
-
-        .stat-footer {
-            font-size: 11px;
-            margin-top: 8px;
-            color: var(--text-muted);
-        }
-
-        /* Panels */
-
-        .panel {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-        }
-
-        .panel-header {
-            padding: 18px 20px;
-
-            border-bottom: 1px solid var(--border);
-
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .panel-title {
-            font-size: 14px;
-            font-weight: 700;
-        }
-
-        .panel-body {
-            padding: 20px;
-        }
-
-        /* Table */
-
-        .table {
-            --bs-table-bg: transparent;
-            --bs-table-color: var(--text-main);
-            --bs-table-border-color: var(--border);
-
-            margin-bottom: 0;
-        }
-
-        .table thead th {
-            font-size: 10px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: .6px;
-            font-weight: 600;
-            padding: 12px 15px;
-        }
-
-        .table tbody td {
-            font-size: 12px;
-            padding: 14px 15px;
-            vertical-align: middle;
-        }
-
-        .table tbody tr:hover {
-            background: rgba(255,255,255,.02);
-        }
-
-        /* Status */
-
-        .status {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background: #0d6efd;
+            color: #fff;
+
+            margin-right: 9px;
+        }
+
+
+        /* =====================================================
+           NAV LINKS
+        ===================================================== */
+
+        .hm-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 10px 13px !important;
+
+            border-radius: 8px;
+
+            color: var(--bs-body-color) !important;
+
+            font-size: .9rem;
+            font-weight: 500;
+
+            transition:
+                background .2s ease,
+                color .2s ease;
+        }
+
+
+        .hm-nav-link:hover {
+            background: var(--bs-tertiary-bg);
+        }
+
+
+        .hm-nav-link.active {
+            background: rgba(13, 110, 253, .12);
+            color: #0d6efd !important;
+        }
+
+
+        /* =====================================================
+           DROPDOWN
+        ===================================================== */
+
+        .hm-dropdown .dropdown-menu {
+            margin-top: 8px;
+
+            border-radius: 12px;
+
+            border: 1px solid var(--bs-border-color);
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, .10);
+
+            padding: 8px;
+        }
+
+
+        .hm-dropdown .dropdown-item {
+            border-radius: 8px;
+            padding: 9px 12px;
+        }
+
+
+        .hm-dropdown .dropdown-item:hover {
+            background: var(--bs-tertiary-bg);
+        }
+
+
+        /* =====================================================
+           USER AREA
+        ===================================================== */
+
+        .hm-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
 
             padding: 5px 9px;
 
-            border-radius: 20px;
+            border-radius: 10px;
 
-            font-size: 10px;
+            text-decoration: none;
+            color: var(--bs-body-color);
+        }
+
+
+        .hm-user:hover {
+            background: var(--bs-tertiary-bg);
+            color: var(--bs-body-color);
+        }
+
+
+        .hm-avatar {
+            width: 36px;
+            height: 36px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #0d6efd;
+            color: white;
+
+            font-weight: 700;
+        }
+
+
+        .hm-user-name {
+            font-size: .85rem;
             font-weight: 600;
         }
 
-        .status-active {
-            background: rgba(34,197,94,.1);
-            color: #4ade80;
+
+        .hm-user-role {
+            font-size: .72rem;
+            color: var(--bs-secondary-color);
         }
 
-        .status-warning {
-            background: rgba(245,158,11,.1);
-            color: #fbbf24;
+
+        /* =====================================================
+           THEME BUTTON
+        ===================================================== */
+
+        .theme-btn {
+            width: 38px;
+            height: 38px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid var(--bs-border-color);
+
+            border-radius: 9px;
+
+            background: var(--bs-body-bg);
+            color: var(--bs-body-color);
+
+            transition: .2s ease;
         }
 
-        .status-danger {
-            background: rgba(239,68,68,.1);
-            color: #f87171;
+
+        .theme-btn:hover {
+            background: var(--bs-tertiary-bg);
         }
 
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
+
+        /* =====================================================
+           MAIN CONTENT
+        ===================================================== */
+
+        .hm-main {
+            min-height: calc(100vh - 68px);
+            padding: 25px;
         }
 
-        /* Mobile */
 
-        .mobile-toggle {
-            display: none;
-        }
+        /* =====================================================
+           MOBILE
+        ===================================================== */
 
         @media (max-width: 991px) {
 
-            .sidebar {
-                transform: translateX(-100%);
-                transition: .25s;
+            .hm-navbar {
+                min-height: 62px;
             }
 
-            .sidebar.show {
-                transform: translateX(0);
-            }
-
-            .main-wrapper {
-                margin-left: 0;
-            }
-
-            .mobile-toggle {
-                display: flex;
-            }
-
-            .content {
+            .hm-main {
                 padding: 18px;
             }
-        }
 
+            .hm-nav-link {
+                padding: 10px 12px !important;
+            }
 
-
-
-html[data-theme="light"] .table {
-    --bs-table-color: var(--text-main);
-}
-
-html[data-theme="light"] .table tbody tr:hover {
-    background: #f8fafc;
-}
-
-
-
-/* //////////////////////////////// */
-
-
-    /* ==========================================
-       PAGE HEADER
-    ========================================== */
-
-    .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .page-icon {
-        width: 42px;
-        height: 42px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        background: rgba(245, 158, 11, .12);
-        color: var(--primary);
-        font-size: 20px;
-    }
-
-
-    /* ==========================================
-       CARD
-    ========================================== */
-
-    .hm-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        overflow: hidden;
-    }
-
-    .hm-card-header {
-        padding: 18px 20px;
-        border-bottom: 1px solid var(--border);
-
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .hm-card-body {
-        padding: 20px;
-    }
-
-
-    /* ==========================================
-       FORM
-    ========================================== */
-
-    .form-label {
-        color: var(--text-main);
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    .form-control,
-    .form-select,
-    textarea.form-control {
-
-        background-color: var(--input-bg) !important;
-        color: var(--text-main) !important;
-
-        border: 1px solid var(--border) !important;
-
-        border-radius: 8px;
-
-    }
-
-
-    .form-control,
-    .form-select {
-
-        min-height: 44px;
-
-    }
-
-
-    textarea.form-control {
-
-        min-height: 130px;
-        resize: vertical;
-
-    }
-
-
-    .form-control::placeholder {
-
-        color: var(--text-muted) !important;
-        opacity: .7;
-
-    }
-
-
-    .form-control:focus,
-    .form-select:focus,
-    textarea.form-control:focus {
-
-        background-color: var(--input-bg) !important;
-
-        color: var(--text-main) !important;
-
-        border-color: var(--primary) !important;
-
-        box-shadow:
-            0 0 0 .2rem rgba(245, 158, 11, .12) !important;
-
-    }
-
-
-    /* ==========================================
-       SELECT
-    ========================================== */
-
-    html[data-theme="dark"] .form-select {
-
-        color-scheme: dark;
-
-    }
-
-    html[data-theme="light"] .form-select {
-
-        color-scheme: light;
-
-    }
-
-
-    /* ==========================================
-       INPUT GROUP
-    ========================================== */
-
-    .input-group-text {
-
-        background: var(--bg-card-hover) !important;
-
-        color: var(--text-muted) !important;
-
-        border-color: var(--border) !important;
-
-    }
-
-
-    /* ==========================================
-       HOUR METER
-    ========================================== */
-
-    .hour-badge {
-
-        font-size: 10px;
-
-        font-weight: 700;
-
-        letter-spacing: 1px;
-
-        padding: 6px 10px;
-
-        border-radius: 20px;
-
-        background: rgba(245, 158, 11, .12);
-
-        color: var(--primary);
-
-    }
-
-
-    .meter-info {
-
-        padding: 11px 13px;
-
-        border-radius: 8px;
-
-        background: rgba(245, 158, 11, .07);
-
-        border: 1px solid rgba(245, 158, 11, .15);
-
-        color: var(--text-muted);
-
-        font-size: 12px;
-
-    }
-
-
-    /* ==========================================
-       IMAGE
-    ========================================== */
-
-    .equipment-image {
-
-        width: 100%;
-
-        height: 230px;
-
-        border-radius: 10px;
-
-        overflow: hidden;
-
-        border: 1px solid var(--border);
-
-        background: var(--bg-main);
-
-    }
-
-
-    .equipment-image img {
-
-        width: 100%;
-
-        height: 100%;
-
-        object-fit: cover;
-
-    }
-
-
-    .image-placeholder {
-
-        height: 230px;
-
-        border-radius: 10px;
-
-        border: 1px dashed var(--border);
-
-        background: var(--bg-main);
-
-        display: flex;
-
-        flex-direction: column;
-
-        align-items: center;
-
-        justify-content: center;
-
-        gap: 10px;
-
-        color: var(--text-muted);
-
-    }
-
-
-    .image-placeholder i {
-
-        font-size: 45px;
-
-        opacity: .35;
-
-    }
-
-
-    .image-placeholder span {
-
-        font-size: 12px;
-
-    }
-
-
-    /* ==========================================
-       SUMMARY
-    ========================================== */
-
-    .summary-row {
-
-        display: flex;
-
-        justify-content: space-between;
-
-        align-items: center;
-
-        padding: 12px 0;
-
-        border-bottom: 1px solid var(--border);
-
-        font-size: 13px;
-
-    }
-
-
-    .summary-row:last-child {
-
-        border-bottom: 0;
-
-        padding-bottom: 0;
-
-    }
-
-
-    .summary-row:first-child {
-
-        padding-top: 0;
-
-    }
-
-
-    .summary-row span {
-
-        color: var(--text-muted);
-
-    }
-
-
-    .summary-row strong {
-
-        font-size: 11px;
-
-        color: var(--primary);
-
-        text-transform: uppercase;
-
-        letter-spacing: .4px;
-
-    }
-
-
-    .summary-row small {
-
-        color: var(--text-muted);
-
-        font-size: 11px;
-
-    }
-
-
-    /* ==========================================
-       BUTTON
-    ========================================== */
-
-    .btn-warning {
-
-        color: #111827;
-
-        font-weight: 600;
-
-    }
-
-
-    /* ==========================================
-       MOBILE
-    ========================================== */
-
-    @media (max-width: 767px) {
-
-        .page-header {
-
-            align-items: flex-start;
-
-            flex-direction: column;
+            .hm-user-info {
+                display: none;
+            }
 
         }
-
-        .page-header > a {
-
-            width: 100%;
-
-        }
-
-        .page-header > a .btn {
-
-            width: 100%;
-
-        }
-
-    }
-
-
 
     </style>
 
-    {% block extra_css %}
-
-    {% endblock %}
+    {% block extra_css %}{% endblock %}
 
 </head>
 
-<script>
-
-(function () {
-
-    const savedTheme =
-        localStorage.getItem(
-            "heavymeter-theme"
-        );
-
-    if (savedTheme) {
-
-        document.documentElement.setAttribute(
-            "data-theme",
-            savedTheme
-        );
-
-    } else {
-
-        const prefersLight =
-            window.matchMedia(
-                "(prefers-color-scheme: light)"
-            ).matches;
-
-        document.documentElement.setAttribute(
-            "data-theme",
-            prefersLight
-                ? "light"
-                : "dark"
-        );
-
-    }
-
-})();
-
-</script>
 
 <body>
 
-<!-- SIDEBAR -->
 
-<aside class="sidebar" id="sidebar">
+<!-- =========================================================
+     TOP NAVBAR
+========================================================= -->
 
-    <div class="brand">
+<nav class="navbar navbar-expand-lg hm-navbar">
 
-        <div class="brand-icon">
-            <i class="bi bi-speedometer2"></i>
-        </div>
-
-        <div>
-            <div class="brand-name">
-                HeavyMeter
-            </div>
-
-            <div class="brand-subtitle">
-                Fleet Management
-            </div>
-        </div>
-
-    </div>
+    <div class="container-fluid px-3 px-lg-4">
 
 
-    <nav class="sidebar-nav">
+        <!-- BRAND -->
+        <a
+            href="{% url 'dashboard:index' %}"
+            class="navbar-brand hm-brand"
+        >
 
-        <div class="nav-section">
-            Overview
-        </div>
+            <span class="hm-brand-icon">
+                <i class="bi bi-speedometer2"></i>
+            </span>
 
-        <a href="{% url 'dashboard:index' %}"
-           class="sidebar-link">
-
-            <i class="bi bi-grid-1x2-fill"></i>
-
-            Dashboard
+            HeavyDuty HM
 
         </a>
 
 
-        <div class="nav-section">
-            Fleet
-        </div>
-
-        <a href="{% url 'equipment:list' %}"
-           class="sidebar-link">
-
-            <i class="bi bi-truck-front-fill"></i>
-
-            Equipment
-
-        </a>
-
-        <a href="{% url 'operators:list' %}"
-           class="sidebar-link">
-
-            <i class="bi bi-person-badge-fill"></i>
-
-            Operators
-
-        </a>
-
-
-        <div class="nav-section">
-            Operations
-        </div>
-
-        <a href="{% url 'hourmeter:reading_list' %}"
-           class="sidebar-link">
-
-            <i class="bi bi-speedometer"></i>
-
-            Hour Readings
-
-        </a>
-
-        <a href="{% url 'equipment:service_list' %}"
-           class="sidebar-link">
-
-            <i class="bi bi-tools"></i>
-
-            Maintenance
-
-        </a>
-
-
-        <div class="nav-section">
-            Management
-        </div>
-
-        <a href="{% url 'companies:company_list' %}"
-           class="sidebar-link">
-
-            <i class="bi bi-building"></i>
-
-            Companies
-
-        </a>
-
-        <a href="{% url 'companies:site_list' %}"
-           class="sidebar-link">
-
-            <i class="bi bi-geo-alt-fill"></i>
-
-            Sites
-
-        </a>
-
-
-        <div class="nav-section">
-            Reports
-        </div>
-
-        <a href="#"
-           class="sidebar-link">
-
-            <i class="bi bi-bar-chart-fill"></i>
-
-            Reports
-
-        </a>
-
-        <a href="#"
-           class="sidebar-link">
-
-            <i class="bi bi-file-earmark-spreadsheet"></i>
-
-            Exports
-
-        </a>
-
-    </nav>
-
-
-    <div class="sidebar-user">
-
-        <div class="user-box">
-
-            <div class="user-avatar">
-
-                {% if request.user.is_authenticated %}
-                    {{ request.user.username|first|upper }}
-                {% else %}
-                    G
-                {% endif %}
-
-            </div>
-
-            <div class="flex-grow-1">
-
-                {% if request.user.is_authenticated %}
-
-                    <div class="user-name">
-                        {{ request.user.get_full_name|default:request.user.username }}
-                    </div>
-
-                    <div class="user-role">
-                        {{ request.user.get_role_display }}
-                    </div>
-
-                {% else %}
-
-                    <div class="user-name">
-                        Guest
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-            {% if request.user.is_authenticated %}
-
-                <form method="post"
-                      action="{% url 'accounts:logout' %}">
-
-                    {% csrf_token %}
-
-                    <button type="submit"
-                            class="btn btn-link text-secondary p-0">
-
-                        <i class="bi bi-box-arrow-right"></i>
-
-                    </button>
-
-                </form>
-
-            {% endif %}
-
-        </div>
-
-    </div>
-
-</aside>
-
-
-<!-- MAIN -->
-
-<div class="main-wrapper">
-
-    <header class="topbar">
-
-        <div class="d-flex align-items-center gap-3">
-
-            <button class="icon-button mobile-toggle"
-                    id="mobileMenu">
-
-                <i class="bi bi-list"></i>
-
-            </button>
-
-            <div class="page-title">
-
-                {% block page_title %}
-                    Dashboard
-                {% endblock %}
-
-            </div>
-
-        </div>
-
-
-<div class="topbar-right">
-
-    <button class="icon-button"
+        <!-- MOBILE TOGGLE -->
+        <button
+            class="navbar-toggler"
             type="button"
-            title="Search">
-
-        <i class="bi bi-search"></i>
-
-    </button>
-
-
-    <!-- Theme Toggle -->
-
-    <button
-        class="icon-button"
-        id="themeToggle"
-        type="button"
-        title="Toggle theme"
-        aria-label="Toggle theme">
-
-        <i class="bi bi-sun-fill"
-           id="themeIcon"></i>
-
-    </button>
+            data-bs-toggle="collapse"
+            data-bs-target="#hmNavbar"
+            aria-controls="hmNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
 
-    <button
-        class="icon-button position-relative"
-        type="button"
-        title="Notifications">
+        <!-- NAVIGATION -->
+        <div
+            class="collapse navbar-collapse"
+            id="hmNavbar"
+        >
 
-        <i class="bi bi-bell"></i>
-
-        <span
-            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-            style="font-size:8px;">
-
-            3
-
-        </span>
-
-    </button>
-
-</div>
-
-    </header>
+            <ul class="navbar-nav me-auto ms-lg-3 gap-lg-1">
 
 
-    <main class="content">
+                <!-- DASHBOARD -->
+                <li class="nav-item">
 
-        {% block content %}
-        {% endblock %}
+                    <a
+                        class="nav-link hm-nav-link"
+                        href="{% url 'dashboard:index' %}"
+                    >
 
-    </main>
+                        <i class="bi bi-grid-1x2"></i>
 
-</div>
+                        Dashboard
+
+                    </a>
+
+                </li>
+
+
+                <!-- EQUIPMENT -->
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link hm-nav-link"
+                        href="{% url 'equipment:list' %}"
+                    >
+
+                        <i class="bi bi-truck"></i>
+
+                        Equipment
+
+                    </a>
+
+                </li>
+
+
+                <!-- HOUR METER -->
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link hm-nav-link"
+                        href="{% url 'hourmeter:reading_list' %}"
+                    >
+
+                        <i class="bi bi-speedometer"></i>
+
+                        Hour Meter
+
+                    </a>
+
+                </li>
+
+
+                <!-- SERVICES -->
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link hm-nav-link"
+                        href="{% url 'equipment:service_list' %}"
+                    >
+
+                        <i class="bi bi-tools"></i>
+
+                        Services
+
+                    </a>
+
+                </li>
+
+
+                <!-- COMPANIES -->
+                <li class="nav-item dropdown hm-dropdown">
+
+                    <a
+                        class="nav-link hm-nav-link dropdown-toggle"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                    >
+
+                        <i class="bi bi-buildings"></i>
+
+                        Companies
+
+                    </a>
+
+
+                    <ul class="dropdown-menu">
+
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'companies:company_list' %}"
+                            >
+
+                                <i class="bi bi-buildings me-2"></i>
+
+                                Companies
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'companies:site_list' %}"
+                            >
+
+                                <i class="bi bi-geo-alt me-2"></i>
+
+                                Sites
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </li>
+
+
+                <!-- REPORTS -->
+                <li class="nav-item dropdown hm-dropdown">
+
+                    <a
+                        class="nav-link hm-nav-link dropdown-toggle"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                    >
+
+                        <i class="bi bi-bar-chart"></i>
+
+                        Reports
+
+                    </a>
+
+
+                    <ul class="dropdown-menu">
+
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="#"
+                            >
+
+                                <i class="bi bi-speedometer2 me-2"></i>
+
+                                Hour Meter Report
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="#"
+                            >
+
+                                <i class="bi bi-tools me-2"></i>
+
+                                Service Report
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="#"
+                            >
+
+                                <i class="bi bi-truck me-2"></i>
+
+                                Equipment Report
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </li>
+
+            </ul>
+
+
+            <!-- RIGHT SIDE -->
+            <div class="d-flex align-items-center gap-2">
+
+
+                <!-- THEME -->
+                <button
+                    type="button"
+                    class="theme-btn"
+                    id="themeToggle"
+                    title="Toggle theme"
+                >
+
+                    <i
+                        class="bi bi-moon-stars"
+                        id="themeIcon"
+                    ></i>
+
+                </button>
+
+
+                <!-- NOTIFICATIONS -->
+                <button
+                    type="button"
+                    class="theme-btn position-relative"
+                >
+
+                    <i class="bi bi-bell"></i>
+
+                    <span
+                        class="position-absolute top-0 start-100
+                               translate-middle badge rounded-pill
+                               bg-danger"
+                    >
+                        3
+                    </span>
+
+                </button>
+
+
+                <!-- USER -->
+                <div class="dropdown hm-dropdown">
+
+                    <a
+                        href="#"
+                        class="hm-user dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                    >
+
+                        <span class="hm-avatar">
+
+                            {% if request.user.first_name %}
+                                {{ request.user.first_name|first|upper }}
+                            {% else %}
+                                {{ request.user.username|first|upper }}
+                            {% endif %}
+
+                        </span>
+
+
+                        <span class="hm-user-info">
+
+                            <span class="hm-user-name d-block">
+
+                                {{ request.user.get_full_name|default:request.user.username }}
+
+                            </span>
+
+                            <span class="hm-user-role d-block">
+
+                                {{ request.user.role|default:"User" }}
+
+                            </span>
+
+                        </span>
+
+                    </a>
+
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="#"
+                            >
+
+                                <i class="bi bi-person me-2"></i>
+
+                                Profile
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="#"
+                            >
+
+                                <i class="bi bi-gear me-2"></i>
+
+                                Settings
+
+                            </a>
+
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+
+                            <form
+                                method="post"
+                                action="{% url 'accounts:logout' %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="dropdown-item text-danger"
+                                >
+
+                                    <i class="bi bi-box-arrow-right me-2"></i>
+
+                                    Logout
+
+                                </button>
+
+                            </form>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     MAIN CONTENT
+========================================================= -->
+
+<main class="hm-main">
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div
+                class="alert alert-{{ message.tags|default:'info' }}
+                       alert-dismissible fade show"
+                role="alert"
+            >
+
+                {{ message }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    {% block content %}
+
+    {% endblock %}
+
+</main>
 
 
 <script
@@ -1363,9 +697,9 @@ html[data-theme="light"] .table tbody tr:hover {
 
 <script>
 
-(function () {
-
-    const html = document.documentElement;
+    /* =====================================================
+       THEME TOGGLE
+    ===================================================== */
 
     const themeToggle =
         document.getElementById("themeToggle");
@@ -1376,13 +710,13 @@ html[data-theme="light"] .table tbody tr:hover {
 
     function setTheme(theme) {
 
-        html.setAttribute(
-            "data-theme",
+        document.documentElement.setAttribute(
+            "data-bs-theme",
             theme
         );
 
         localStorage.setItem(
-            "heavymeter-theme",
+            "hm-theme",
             theme
         );
 
@@ -1390,43 +724,21 @@ html[data-theme="light"] .table tbody tr:hover {
         if (theme === "dark") {
 
             themeIcon.className =
-                "bi bi-sun-fill";
-
-            themeToggle.setAttribute(
-                "title",
-                "Switch to light mode"
-            );
+                "bi bi-sun";
 
         } else {
 
             themeIcon.className =
-                "bi bi-moon-fill";
-
-            themeToggle.setAttribute(
-                "title",
-                "Switch to dark mode"
-            );
+                "bi bi-moon-stars";
 
         }
 
     }
 
 
-    /*
-     * Load saved theme
-     */
-
     const savedTheme =
-        localStorage.getItem(
-            "heavymeter-theme"
-        );
+        localStorage.getItem("hm-theme");
 
-
-    /*
-     * Use saved theme.
-     * If there isn't one, use the
-     * browser/system preference.
-     */
 
     if (savedTheme) {
 
@@ -1434,73 +746,27 @@ html[data-theme="light"] .table tbody tr:hover {
 
     } else {
 
-        const prefersLight =
-            window.matchMedia(
-                "(prefers-color-scheme: light)"
-            ).matches;
-
-
-        setTheme(
-            prefersLight
-                ? "light"
-                : "dark"
-        );
+        setTheme("light");
 
     }
 
 
-    /*
-     * Toggle
-     */
+    themeToggle.addEventListener(
+        "click",
+        function () {
 
-    if (themeToggle) {
+            const current =
+                document.documentElement
+                    .getAttribute("data-bs-theme");
 
-        themeToggle.addEventListener(
-            "click",
-            function () {
+            setTheme(
+                current === "dark"
+                    ? "light"
+                    : "dark"
+            );
 
-                const currentTheme =
-                    html.getAttribute(
-                        "data-theme"
-                    );
-
-
-                const newTheme =
-                    currentTheme === "dark"
-                        ? "light"
-                        : "dark";
-
-
-                setTheme(newTheme);
-
-            }
-        );
-
-    }
-
-})();
-
-</script>
-
-
-<script>
-
-    const mobileMenu =
-        document.getElementById("mobileMenu");
-
-    const sidebar =
-        document.getElementById("sidebar");
-
-
-    if (mobileMenu) {
-
-        mobileMenu.addEventListener("click", function () {
-
-            sidebar.classList.toggle("show");
-
-        });
-
-    }
+        }
+    );
 
 </script>
 
